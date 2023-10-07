@@ -14,7 +14,7 @@ $detalle = consultas::get_datos("select deor_cantidad as cantidad from detalle_o
 </div>
 <form action="orden_produccion_control.php" method="post" accept-charset="utf-8" class="form-horizontal">
     <div class="modal-body">
-        <input type="hidden" name="accion" value="5" />
+        <input type="hidden" name="accion" value="5" /> 
         <input type="hidden" name="vdeor_id" value="<?php echo $_REQUEST['vdeor_id'] ?>" />
         <input type="hidden" name="vorpr_id" value="<?php echo $_REQUEST['vorpr_id'] ?>" />
         <div class="form-group">

@@ -29,7 +29,7 @@
                             <div class="box box-primary">
                                 <div class="box-header">
                                     <i class="ion ion-plus"></i>
-                                    <h3 class="box-title">Agregar Materia Prima</h3>
+                                    <h3 class="box-title">Agregar Etapas</h3>
                                     <a href="articulo_index.php" class="btn btn-primary pull-right btn-sm" role="buttom" data-title ="Volver"
                                     rel="tooltip" data-placement="top">
                                         <i class="fa fa-arrow-left"></i>
@@ -38,9 +38,8 @@
                                 <form action="articulo_control.php" method="get" accept-charset="utf-8" class="form-horizontal">
                                     <div class="box-body">
                                         <input type="hidden" name="accion" value="1"/>
-                                        <input type="hidden" name="vart_cod" value="0"/>
                                         <div class="form-group">
-                                            <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Cod. Materia Prima:</label>
+                                            <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Cod. Etapa:</label>
                                             <div class="col-lg-4 col-sm-4 col-md-4 col-xs-8">
                                                 <input type="text" name ="vmate_prima_cod" class="form-control" autofocus=""/>
                                             </div>
@@ -48,13 +47,7 @@
                                         <div class="form-group">
                                             <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Descripcion:</label>
                                             <div class="col-lg-8 col-sm-8 col-md-8 col-xs-10">
-                                                <input type="text" name ="vmate_prima_descri" class="form-control" required=""/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Unidad de Medida:</label>
-                                            <div class="col-lg-8 col-sm-8 col-md-8 col-xs-10">
-                                                <input type="text" name ="vmate_prima_uni" class="form-control" required=""/>
+                                                <input type="text" name ="vetapas_desc" class="form-control" required=""/>
                                             </div>
                                         </div>
                                     </div>
