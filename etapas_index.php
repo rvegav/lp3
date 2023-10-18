@@ -33,13 +33,19 @@ require 'acceso_bloquear_ventas.php';
                                     <!-- <a href="marca_print.php" class="btn btn-default btn-sm pull-right" role="button" target="print"><i class="fa fa-print"></i></a>    -->
                                 </div>                                
                                 <div class="box-body">
-                            <?php if (!empty($_SESSION['mensaje'])) { ?>
-                            <div class="alert alert-danger" role="alert" id="mensaje">
+                            <?php if (!empty($_SESSION['correcto'])) { ?>
+                            <div class="alert alert-success" role="alert" id="mensaje">
                                 <span class="glyphicon glyphicon-info-sign"></span>
-                                <?php echo $_SESSION['mensaje'];
-                                $_SESSION['mensaje'] = '';?>
+                                <?php echo $_SESSION['correcto'];
+                                $_SESSION['correcto'] = '';?>
                             </div>        
-                            <?php } ?>
+                            <?php }elseif(!empty($_SESSION['error'])){ ?>
+                            <div class="alert alert-success" role="alert" id="mensaje">
+                                <span class="glyphicon glyphicon-info-sign"></span>
+                                <?php echo $_SESSION['error'];
+                                $_SESSION['error'] = '';?>
+                            </div>
+                            <?php }?>
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <form method="post" accept-charset="utf-8" class="form-horizontal">
@@ -75,13 +81,13 @@ require 'acceso_bloquear_ventas.php';
                                                         <tbody>
                                                         <?php foreach ($etapas as $etapa) { ?>
                                                                 <tr>
-                                                                    <td><?php echo $etapa['mapr_descripcion']; ?></td>
+                                                                    <td><?php echo $etapa['etpr_descripcion']; ?></td>
                                                                     <td class="text-center">
-                                                                        <a href="etapas_edit_edit.php?vmate_cod=<?php echo $etapa['mapr_id']; ?>" class="btn btn-warning btn-sm" role="button" 
+                                                                        <a href="etapas_edit.php?vetapas_cod=<?php echo $etapa['etpr_id']; ?>" class="btn btn-warning btn-sm" role="button" 
                                                                            data-title="Editar" rel="tooltip" data-placement="top">
                                                                             <i class="fa fa-edit"></i>
                                                                         </a>
-                                                                        <a onclick="borrar(<?php echo $etapa['mapr_id']."_".$etapa['mapr_descripcion']." ".strtoupper($etapa['mapr_descripcion'])."'";?>)" data-toggle="modal" data-target="#borrar"
+                                                                        <a onclick="borrar(<?php echo $etapa['etpr_id']."_".$etapa['etpr_descripcion']." ".strtoupper($etapa['etpr_descripcion'])."'";?>)" data-toggle="modal" data-target="#borrar"
                                                                            class="btn btn-danger btn-sm" role="button" 
                                                                            data-title="Borrar" rel="tooltip" data-placement="top">
                                                                             <i class="fa fa-trash"></i>
@@ -139,8 +145,8 @@ require 'acceso_bloquear_ventas.php';
     function borrar(datos){
         var dat = datos.split('_');
 //        alert(dat[1])
-        $("#si").attr('href','etapas_control.php?vmate_prima_cod='+dat[0]+'&accion=3');
-        $("#confirmacion").html('<span class="glyphicon glyphicon-warning-sign"></span> Desea borrar el articulo <i><strong>'+dat[1]+'</strong></i>?');
+        $("#si").attr('href','etapas_control.php?vetapas_cod='+dat[0]+'&accion=3');
+        $("#confirmacion").html('<span class="glyphicon glyphicon-warning-sign"></span> Desea borrar la etapa <i><strong>'+dat[1]+'</strong></i>?');
     };    
     
 </script>

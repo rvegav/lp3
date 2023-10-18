@@ -31,7 +31,7 @@ require 'acceso_bloquear_ventas.php';
                             <div class="box-header">
                                 <i class="fa fa-plus"></i>
                                 <h3 class="box-title">Agregar Detalle Pedido</h3>
-                                <a href="pedcompras_index.php" class="btn btn-primary btn-sm pull-right" role="button"><i class="fa fa-arrow-left"></i></a>                                                                                                                
+                                <a href="orden_produccion_index.php" class="btn btn-primary btn-sm pull-right" role="button"><i class="fa fa-arrow-left"></i></a>                                                                                                                
                             </div>                                
                             <div class="box-body">
                                 <?php if (!empty($_SESSION['correcto'])) { ?>
@@ -116,7 +116,7 @@ require 'acceso_bloquear_ventas.php';
                                                                      class="btn btn-warning btn-sm" role="button" data-title="Editar" rel="tooltip" data-placement="top"
                                                                      data-toggle="modal" data-target="#editar"><i class="fa fa-edit"></i>
                                                                  </a>
-                                                                 <a onclick="quitar(<?php echo $det['deor_id']; ?>)" data-toggle="modal" data-target="#borrar" 
+                                                                 <a onclick="quitar(<?php echo $det['deor_id']; ?>, <?php echo $det['deor_orpr_id']?>)" data-toggle="modal" data-target="#borrar" 
                                                                  class="btn btn-danger btn-sm" role="button" data-title="Quitar" rel="tooltip" data-placement="top"> 
                                                                  <i class="fa fa-trash"></i></a>                                                                        
                                                              </td>
@@ -160,7 +160,7 @@ require 'acceso_bloquear_ventas.php';
                                         </div>
                                         <div class="box-footer">
                                             <button type="submit" class="btn btn-primary pull-right">
-                                                <span class="glyphicon glyphicon-plus"></span> Agregdar
+                                                <span class="glyphicon glyphicon-plus"></span> Agregar
                                             </button>
                                         </div>
                                     </form>                                  
@@ -210,10 +210,9 @@ require 'acceso_bloquear_ventas.php';
     });
 </script>
 <script>
-    function quitar(id){
-        $("#si").attr('href','pedcompras_dcontrol.php?vped_cod='+dat[0]+'&vdep_cod='+dat[1]+'&vart_cod='+dat[2]+'&accion=3');
-        $("#confirmacion").html('<span class="glyphicon glyphicon-warning-sign"></span> Desea quitar el articulo<i><strong> '
-            +dat[3]+'</strong> del pedido</i>?');
+    function quitar(id, orden){
+        $("#si").attr('href','orden_produccion_control.php?vdeor_id='+id+'&accion=6'+'&vorpr='+orden);
+        $("#confirmacion").html('<span class="glyphicon glyphicon-warning-sign"></span> Desea quitar el articulo<i><strong></strong> del pedido</i>?');
     };    
     
 

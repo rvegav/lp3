@@ -30,24 +30,24 @@ require 'acceso_bloquear_ventas.php';
                             <div class="box-header">
                                 <i class="ion ion-plus"></i>
                                 <h3 class="box-title">Editar Etapas</h3>
-                                <a href="articulo_index.php" class="btn btn-primary pull-right btn-sm" role="buttom" data-title ="Volver"
+                                <a href="etapas_index.php" class="btn btn-primary pull-right btn-sm" role="buttom" data-title ="Volver"
                                 rel="tooltip" data-placement="top">
                                 <i class="fa fa-arrow-left"></i>
                             </a>
                         </div>
-                        <form action="articulo_control.php" method="get" accept-charset="utf-8" class="form-horizontal">
-                            <?php $etapa = consultas::get_datos("select * from etapas_produccion where art_cod=".$_REQUEST['vetapa_cod'])?>
+                        <form action="etapas_control.php" method="get" accept-charset="utf-8" class="form-horizontal">
+                            <?php $etapa = consultas::get_datos("select * from etapas_produccion where etpr_id=".$_REQUEST['vetapas_cod'])?>
                             <div class="box-body">
                                 <input type="hidden" name="accion" value="2"/>
                                 <div class="form-group">
                                     <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Cod. Etapa:</label>
                                     <div class="col-lg-4 col-sm-4 col-md-4 col-xs-8">
-                                        <input type="text" name ="vmate_prima_cod" class="form-control" autofocus="" value="<?= $etapa[0]['etpr_id'] ?>" />
+                                        <input type="text" name ="vetapas_cod" class="form-control" autofocus="" readonly value="<?= $etapa[0]['etpr_id'] ?>" />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Descripcion:</label>
-                                    <div class="col-lg-8 col-sm-8 col-md-8 col-xs-10">
+                                    <div class="col-lg-4 col-sm-4 col-md-4 col-xs-10">
                                         <input type="text" name ="vetapas_desc" class="form-control" required="" value="<?= $etapa[0]['etpr_descripcion'] ?>" />
                                     </div>
                                 </div>

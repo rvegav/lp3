@@ -35,7 +35,7 @@
                                         <i class="fa fa-arrow-left"></i>
                                     </a>
                                 </div>
-                                <form action="articulo_control.php" method="get" accept-charset="utf-8" class="form-horizontal">
+                                <form action="etapas_control.php" method="get" accept-charset="utf-8" class="form-horizontal">
                                     <div class="box-body">
                                         <input type="hidden" name="accion" value="1"/>
                                         <div class="form-group">
@@ -46,7 +46,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Descripcion:</label>
-                                            <div class="col-lg-8 col-sm-8 col-md-8 col-xs-10">
+                                            <div class="col-lg-4 col-sm-4 col-md-4 col-xs-4">
                                                 <input type="text" name ="vetapas_desc" class="form-control" required=""/>
                                             </div>
                                         </div>

@@ -74,6 +74,21 @@ if ($_REQUEST['accion']==1) {
         $_SESSION['correcto'] = '';
         header("location:orden_produccion_detalle.php?vorpr_id= ".$orpr_id); 
     }
+}elseif ($_REQUEST['accion']==6) {
+    $vdeor_id = $_REQUEST['vdeor_id'];
+    $vorpr = $_REQUEST['vorpr'];
+    $sql = "DELETE from detalle_orden_prod where deor_id = ".$vdeor_id;
+    $resultadoDelete = consultas::ejecutar_sql($sql);
+    if ($resultadoDelete) {
+        $_SESSION['correcto'] = 'Se eliminó correctamente el detalle';
+        $_SESSION['error'] = '';
+        header("location:orden_produccion_detalle.php?vorpr_id= ".$vorpr); 
+
+    }else{
+        $_SESSION['error'] = 'Hubo un error:';
+        $_SESSION['correcto'] = '';
+        header("location:orden_produccion_detalle.php?vorpr_id= ".$vorpr); 
+    }
 }
 
 
