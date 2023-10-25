@@ -84,24 +84,24 @@ require 'acceso_bloquear_ventas.php';
                                                             <td><?php echo $articulo['tipo_descri']; ?></td>
                                                             <td class="text-center">
                                                                 <a href="articulo_edit.php?vart_cod=<?php echo $articulo['art_cod']; ?>" class="btn btn-warning btn-sm" role="button" 
-                                                                 data-title="Editar" rel="tooltip" data-placement="top">
-                                                                 <i class="fa fa-edit"></i>
-                                                             </a>
-                                                             <a onclick="borrar(<?php echo "'".$articulo['art_cod']."_".$articulo['art_descri']." ".strtoupper($articulo['mar_descri'])."'";?>)" data-toggle="modal" data-target="#borrar"
-                                                                 class="btn btn-danger btn-sm" role="button" 
-                                                                 data-title="Borrar" rel="tooltip" data-placement="top">
-                                                                 <i class="fa fa-trash"></i>
-                                                             </a>
-                                                             <a onclick="composicion(<?php echo $articulo['art_cod']; ?>)" class="btn btn-warning btn-sm" role="button" data-title="Ver Composicion" data-toggle="modal" data-target="#composicion<?= $articulo['art_cod'] ?>" rel="tooltip" data-placement="top">
-                                                                 <i class="fa fa-eyes"></i>
-                                                             </a>                                                                   
-                                                         </td>
-                                                     </tr>
-                                                 <?php } ?>                                                            
-                                             </tbody>
-                                         </table>
-                                     </div>
-                                 <?php } else { ?>
+                                                                   data-title="Editar" rel="tooltip" data-placement="top">
+                                                                   <i class="fa fa-edit"></i>
+                                                               </a>
+                                                               <a onclick="borrar(<?php echo "'".$articulo['art_cod']."_".$articulo['art_descri']." ".strtoupper($articulo['mar_descri'])."'";?>)" data-toggle="modal" data-target="#borrar"
+                                                                   class="btn btn-danger btn-sm" role="button" 
+                                                                   data-title="Borrar" rel="tooltip" data-placement="top">
+                                                                   <i class="fa fa-trash"></i>
+                                                               </a>
+                                                               <a  class="btn btn-warning btn-sm" role="button" data-title="Ver Composicion" data-toggle="modal" data-target="#composicion<?= $articulo['art_cod'] ?>" rel="tooltip" data-placement="top">
+                                                                   <i class="fa fa-eye"></i>
+                                                               </a>                                                                   
+                                                           </td>
+                                                       </tr>
+                                                   <?php } ?>                                                            
+                                               </tbody>
+                                           </table>
+                                       </div>
+                                   <?php } else { ?>
                                     <!--mostrar mensaje de alerta tipo info -->
                                     <div class="alert alert-info flat">
                                         <i class="fa fa-info-circle"></i> No se han registrado articulos...
@@ -138,66 +138,61 @@ require 'acceso_bloquear_ventas.php';
 </div>            
 </div>           
 <!-- MODAL CARGO BORRAR -->
-<?php foreach ($articulos as $articulo) { ?>
-<div class="modal fade" id="composicion<?= $articulo['art_cod'] ?>" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Composicion del Articulo</h3>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-              </button>
-          </div>                    
-          <div class="modal-body">
-            <form action="" method="get" accept-charset="utf-8" class="form-horizontal">
-                <div class="box-body">
-                    <input type="hidden" name="accion" value="1"/>
+<?php foreach ($articulos as $articulo): ?>
+    <div class="modal fade" id="composicion<?= $articulo['art_cod'] ?>" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Composicion del Articulo</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>                    
+              <div class="modal-body">
+                <form action="" method="get" accept-charset="utf-8" class="form-horizontal">
+                    <div class="box-body">
+                        <input type="hidden" name="accion" value="1"/>
 
-                    <div class="form-group">
-                        <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Materiales:</label>
-                        <div class="col-lg-6 col-sm-6 col-md-6 col-xs-6">
-                            <div class="input-group">
-                                <?php $materiales = consultas::get_datos("select * from material_primario where matr_id not in ( select ) = $articulo['art_cod']");?>
-                                <select class="form-control select2" name="vtipo_cod" required="">
-                                    <?php if(!empty($materiales)) {
-                                        foreach ($materiales as $material) { ?>
-                                            <option value="<?php echo $tipo['tipo_cod'];?>"><?php echo $tipo['tipo_descri'];?></option>
-                                        <?php } 
-                                    }else{?>
-                                        <option value="">No existen materiales cargados</option>
-                                    <?php } ?>
-                                </select>
-                                <span class="input-group-btn">
-                                    <button class="btn btn-primary btn-flat" type="button">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
-                                </span>
+                        <div class="form-group">
+                            <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Materiales:</label>
+                            <div class="col-lg-6 col-sm-6 col-md-6 col-xs-6">
+                                <div class="input-group">
+                                    <?php $sql = "select * from material_primario where mapr_id not in (select coar_mapr_id from composion_articulos where coar_art_id =". $articulo['art_cod'].")" ?>
+                                    <?php $materiales = consultas::ejecutar_sql($sql);?>
+                                    <select class="form-control  select2" name="vtipo_cod" required="">
+                                        <?php if (!empty($materiales)): ?>
+                                            <?php foreach ($materiales as $material): ?>
+                                                <option value="<?php echo $tipo['tipo_cod'];?>"><?php echo $tipo['tipo_descri'];?></option>
+                                            <?php endforeach ?>
+                                            
+                                        <?php else: ?>
+                                            <option value="">No existen materiales cargados</option>
+                                        <?php endif ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Cantidad:</label>
+                            <div class="col-lg-6 col-sm-6 col-md-6 col-xs-6">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="vcant_materia">
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Cantidad:</label>
-                        <div class="col-lg-6 col-sm-6 col-md-6 col-xs-6">
-                            <div class="input-group">
-                                <input type="text" name="vcant_materia">
-                            </div>
-                        </div>
+                    <div class="box-footer">
+                        <button type="button" id="" class="btn btn-primary pull-right">
+                            <span class="glyphicon glyphicon-floppy-disk"></span> Registrar
+                        </button>
                     </div>
-                </div>
-                <div class="box-footer">
-                    <button type="button" id="" class="btn btn-primary pull-right">
-                        <span class="glyphicon glyphicon-floppy-disk"></span> Registrar
-                    </button>
-                </div>
-            </form>
+                </form>
+            </div>
+           
         </div>
-        <div class="modal-footer">                            
-            <button data-dismiss="modal" class="btn btn-default"><i class="fa fa-close"></i> NO</button>
-        </div>
-    </div>
-</div>            
+    </div>            
 </div>  
-<?php } ?>      
+<?php endforeach ?>
 <!-- FIN MODAL CARGO BORRAR -->                
 </div>                  
 <?php require 'menu/js_lte.ctp'; ?><!--ARCHIVOS JS-->
