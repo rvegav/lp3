@@ -35,7 +35,7 @@
                                         <i class="fa fa-arrow-left"></i>
                                     </a>
                                 </div>
-                                <form action="articulo_control.php" method="get" accept-charset="utf-8" class="form-horizontal">
+                                <form action="materia_prima_control.php" method="get" accept-charset="utf-8" class="form-horizontal">
                                     <div class="box-body">
                                         <input type="hidden" name="accion" value="1"/>
                                         <input type="hidden" name="vart_cod" value="0"/>

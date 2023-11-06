@@ -65,7 +65,7 @@ require 'acceso_bloquear_ventas.php';
                                         ?>
                                         <!-- crear tabla con datos -->
                                         <div class="table-responsive">
-                                            <table class="table table-condensed table-striped table-hover table-bordered">
+                                            <table class="table table-condensed table-striped table-hover table-bordered" id="tablaArticulos">
                                                 <thead>
                                                     <tr>
                                                         <th>Descripción</th>
@@ -84,24 +84,24 @@ require 'acceso_bloquear_ventas.php';
                                                             <td><?php echo $articulo['tipo_descri']; ?></td>
                                                             <td class="text-center">
                                                                 <a href="articulo_edit.php?vart_cod=<?php echo $articulo['art_cod']; ?>" class="btn btn-warning btn-sm" role="button" 
-                                                                   data-title="Editar" rel="tooltip" data-placement="top">
-                                                                   <i class="fa fa-edit"></i>
-                                                               </a>
-                                                               <a onclick="borrar(<?php echo "'".$articulo['art_cod']."_".$articulo['art_descri']." ".strtoupper($articulo['mar_descri'])."'";?>)" data-toggle="modal" data-target="#borrar"
-                                                                   class="btn btn-danger btn-sm" role="button" 
-                                                                   data-title="Borrar" rel="tooltip" data-placement="top">
-                                                                   <i class="fa fa-trash"></i>
-                                                               </a>
-                                                               <a  class="btn btn-warning btn-sm" role="button" data-title="Ver Composicion" data-toggle="modal" data-target="#composicion<?= $articulo['art_cod'] ?>" rel="tooltip" data-placement="top">
-                                                                   <i class="fa fa-eye"></i>
-                                                               </a>                                                                   
-                                                           </td>
-                                                       </tr>
-                                                   <?php } ?>                                                            
-                                               </tbody>
-                                           </table>
-                                       </div>
-                                   <?php } else { ?>
+                                                                 data-title="Editar" rel="tooltip" data-placement="top">
+                                                                 <i class="fa fa-edit"></i>
+                                                             </a>
+                                                             <a onclick="borrar(<?php echo "'".$articulo['art_cod']."_".$articulo['art_descri']." ".strtoupper($articulo['mar_descri'])."'";?>)" data-toggle="modal" data-target="#borrar"
+                                                                 class="btn btn-danger btn-sm" role="button" 
+                                                                 data-title="Borrar" rel="tooltip" data-placement="top">
+                                                                 <i class="fa fa-trash"></i>
+                                                             </a>
+                                                             <a  class="btn btn-warning btn-sm" role="button" data-title="Ver Composicion" data-toggle="modal" data-target="#composicion<?= $articulo['art_cod'] ?>" rel="tooltip" data-placement="top">
+                                                                 <i class="fa fa-eye"></i><input type="hidden" class="vart_cod" value="<?php echo $articulo['art_cod'] ?>">
+                                                             </a>                                                                   
+                                                         </td>
+                                                     </tr>
+                                                 <?php } ?>                                                            
+                                             </tbody>
+                                         </table>
+                                     </div>
+                                 <?php } else { ?>
                                     <!--mostrar mensaje de alerta tipo info -->
                                     <div class="alert alert-info flat">
                                         <i class="fa fa-info-circle"></i> No se han registrado articulos...
@@ -149,20 +149,20 @@ require 'acceso_bloquear_ventas.php';
                   </button>
               </div>                    
               <div class="modal-body">
-                <form action="" method="get" accept-charset="utf-8" class="form-horizontal">
+                <form action="" method="get" accept-charset="utf-8" class="form-horizontal" id="<?php echo $articulo['art_cod'] ?>">
                     <div class="box-body">
                         <input type="hidden" name="accion" value="1"/>
-
+                        <input type="hidden" name="vart_cod" class="vart_cod" value="<?php echo $articulo['art_cod'] ?>">
                         <div class="form-group">
                             <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Materiales:</label>
                             <div class="col-lg-6 col-sm-6 col-md-6 col-xs-6">
                                 <div class="input-group">
                                     <?php $sql = "select * from material_primario where mapr_id not in (select coar_mapr_id from composion_articulos where coar_art_id =". $articulo['art_cod'].")" ?>
-                                    <?php $materiales = consultas::ejecutar_sql($sql);?>
-                                    <select class="form-control  select2" name="vtipo_cod" required="">
+                                    <?php $materiales = consultas::get_datos($sql);?>
+                                    <select class="form-control select2" name="vmapr_id" required="">
                                         <?php if (!empty($materiales)): ?>
                                             <?php foreach ($materiales as $material): ?>
-                                                <option value="<?php echo $tipo['tipo_cod'];?>"><?php echo $tipo['tipo_descri'];?></option>
+                                                <option value="<?php echo $material['mapr_id'];?>"><?php echo $material['mapr_descripcion'];?></option>
                                             <?php endforeach ?>
                                             
                                         <?php else: ?>
@@ -176,19 +176,30 @@ require 'acceso_bloquear_ventas.php';
                             <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Cantidad:</label>
                             <div class="col-lg-6 col-sm-6 col-md-6 col-xs-6">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" name="vcant_materia">
+                                    <input type="text" class="form-control" id="vcant_materia" name="vcant_materia">
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="box-footer">
-                        <button type="button" id="" class="btn btn-primary pull-right">
+                        <button type="button"  class="btn btn-primary pull-right registrar_composicion">
                             <span class="glyphicon glyphicon-floppy-disk"></span> Registrar
                         </button>
                     </div>
                 </form>
+                <div class="table-responsive">
+                    <table class="table composicion_articulo" id="composicion_articulo<?php echo $articulo['art_cod'] ?>">
+                        <thead>
+                            <th>Material</th>
+                            <th>Cantidad</th>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    
+                </div>
             </div>
-           
+
         </div>
     </div>            
 </div>  
@@ -206,8 +217,93 @@ require 'acceso_bloquear_ventas.php';
         var dat = datos.split('_');
         $("#si").attr('href','articulo_control.php?vart_cod='+dat[0]+'&vart_descri='+dat[1]+'&accion=3');
         $("#confirmacion").html('<span class="glyphicon glyphicon-warning-sign"></span> Desea borrar el articulo <i><strong>'+dat[1]+'</strong></i>?');
-    };    
+    };
+    let art_id;
+    $('#tablaArticulos tbody').on('click','a',function(){
+        let art_id_aux;    
+        art_id = this.children[1].getAttribute('value');
+        let cadena = '#composicion_articulo'+art_id;
+        if (art_id != art_id_aux) {
+            $(cadena).dataTable().fnDestroy();
+            document.getElementById(art_id).reset();
+        }
+        let tabla = $(cadena).DataTable({
+            'lengthMenu':[[10, 15, 20], [10, 15, 20]],
+            'paging':true,
+            'info':true,
+            'filter':true,
+            'stateSave':true,
+            'processing':true,
+            'searching':false,
+            'ajax': {
+                url: 'articulo_control.php',
+                "type":"POST",
+                "data":function(data){
+                    data.vart_cod=art_id;
+                    data.accion=2;
+                }
+            },
+            'language':{
+                "sProcessing":     "Procesando...",
+                "sLengthMenu":     "Mostrar _MENU_ registros",
+                "sZeroRecords":    "No se encontraron resultados",
+                "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix":    "",
+                "sSearch":         "Buscar:",
+                "sUrl":            "",
+                "sInfoThousands":  ",",
+                "oPaginate": {
+                    "sFirst":    "Primero",
+                    "sLast":     "Último",
+                    "sNext":     "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            },
+            'columns':[
+                {data:'material','sClass':'text-center'},
+                {data:'cantidad'}]
+            
+        }); 
 
+    });
+    $('.registrar_composicion').click(()=>{
+        let cadena = '#'+art_id;
+        let tabla = '#composicion_articulo'+art_id;
+        let data = $(cadena).serialize();
+        $.ajax({
+            url: 'articulo_control.php',
+            type: 'POST',
+            data: data,
+        })
+        .done(function(r) {
+            let json = JSON.parse(r);
+            console.log(data);
+            if (json == 'correcto') {
+             $(tabla).DataTable().ajax.reload();
+         }
+     })
+        .fail(function(xrs) {
+            var json = JSON.parse(xrs.responseText);
+            if (json.mensaje) {
+                alert(json.mensaje);
+            }else{
+                alert('Ocurrio un error inesperado');
+            }
+            $("#vencimiento").val("");
+        })
+        .always(function() {
+            console.log("complete");
+        });
+
+    })   
+    
 </script>
 </body>
 </html>

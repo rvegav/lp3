@@ -73,11 +73,11 @@ require 'acceso_bloquear_ventas.php';
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                        <?php foreach ($materias as $materia) { ?>
+                                                        <?php foreach ($materias as $materia_prima) { ?>
                                                                 <tr>
                                                                     <td><?php echo $materia_prima['mapr_descripcion']; ?></td>
                                                                     <td class="text-center">
-                                                                        <a href="materia_prima_edit.php?vmate_cod=<?php echo $materia['mapr_id']; ?>" class="btn btn-warning btn-sm" role="button" 
+                                                                        <a href="materia_prima_edit.php?vmate_cod=<?php echo $materia_prima['mapr_id']; ?>" class="btn btn-warning btn-sm" role="button" 
                                                                            data-title="Editar" rel="tooltip" data-placement="top">
                                                                             <i class="fa fa-edit"></i>
                                                                         </a>

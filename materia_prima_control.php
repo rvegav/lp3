@@ -6,13 +6,13 @@ require 'clases/conexion.php';
 
 $accion = $_REQUEST['accion'];
 if ($accion == 1) {
-    $sql = "select max(mapr_id)+1 as mapr_id from material_primario";
+    $sql = "select coalesce(max(mapr_id), 0)+1 as mapr_id from material_primario";
     $resultadoId = consultas::get_datos($sql);
     $descripcion = $_REQUEST['vmate_prima_descri'];
     $unidad = $_REQUEST['vmate_prima_uni'];
     $id = $resultadoId[0]['mapr_id'];
-    $sql = "INSERT INTO material_primario (mapr_id, mapr_descripcion, mapr_unidad_medida) VALUES ($id, $descripcion, $unidad)";
-    $resultadoInsert = consultas::ejecutar_sql($sql);
+    $sql = "INSERT INTO material_primario (mapr_id, mapr_descripcion, mapr_unidad_medida) VALUES ($id, '$descripcion', '$unidad')";
+    $resultadoInsert = consultas::get_datos($sql);
     if ($resultadoInsert) {
         $_SESSION['correcto'] = 'Se insertó correctamente la orden nro:'.$id;
         $_SESSION['error'] = '';
