@@ -94,21 +94,21 @@ require 'acceso_bloquear_ventas.php';
                                                                     <i class="fa fa-list"></i>
                                                                 </a>
                                                                 <a href="produccion_edit.php?vprod_id=<?php echo $produccion['prod_id']; ?>" class="btn btn-warning btn-sm" role="button" 
-                                                                   data-title="Editar" rel="tooltip" data-placement="top">
-                                                                   <i class="fa fa-edit"></i>
-                                                               </a>
-                                                               <a  data-toggle="modal" data-target="#opereaciones<?php echo $produccion['prod_id']; ?>"
-                                                                   class="btn btn-success btn-sm" role="button" 
-                                                                   data-title="Opereaciones" rel="tooltip" data-placement="top">
-                                                                   <i class="fa fa-plus"></i>
-                                                               </a>                                                                    
-                                                           </td>
-                                                       </tr>
-                                                   <?php } ?>                                                            
-                                               </tbody>
-                                           </table>
-                                       </div>
-                                   <?php } else { ?>
+                                                                 data-title="Editar" rel="tooltip" data-placement="top">
+                                                                 <i class="fa fa-edit"></i>
+                                                             </a>
+                                                             <a  data-toggle="modal" data-target="#opereaciones<?php echo $produccion['prod_id']; ?>"
+                                                                 class="btn btn-success btn-sm" role="button" 
+                                                                 data-title="Opereaciones" rel="tooltip" data-placement="top">
+                                                                 <i class="fa fa-plus"></i>
+                                                             </a>                                                                    
+                                                         </td>
+                                                     </tr>
+                                                 <?php } ?>                                                            
+                                             </tbody>
+                                         </table>
+                                     </div>
+                                 <?php } else { ?>
                                     <!--mostrar mensaje de alerta tipo info -->
                                     <div class="alert alert-info flat">
                                         <i class="fa fa-info-circle"></i> No se han registrado producciones de produccion...
@@ -200,7 +200,7 @@ require 'acceso_bloquear_ventas.php';
                         <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Etapa:</label>
                         <div class="col-lg-6 col-sm-6 col-md-6 col-xs-6">
                             <div class="input-group">
-                                <?php $etapas_produccion = consultas::get_datos("select * from etapas ");?>
+                                <?php $etapas_produccion = consultas::get_datos("select * from etapas_produccion where  etpr_id not in (select copr_etpr_id from control_produccion where  copr_prod_id = ".$produccion['prod_id']." )");?>
                                 <select class="form-control select2" name="vmar_cod" required="">
                                     <?php if(!empty($etapas_produccion)) {
                                         foreach ($etapas_produccion as $etapa) { ?>
@@ -219,14 +219,17 @@ require 'acceso_bloquear_ventas.php';
                         </div>
                     </div>
                 </div>
-                <table>
-                    <thead>
-                        <td>#</td>
-                        <td>Etapa</td>
-                        <td>Fecha</td>
-                        <td>Observacion</td>
-                    </thead>
-                </table>
+                <div class="table-responsive">
+
+                    <table class="table" id="historial_etapa<?php echo $produccion['prod_id'] ?>">
+                        <thead>
+                            <td>#</td>
+                            <td>Etapa</td>
+                            <td>Fecha</td>
+                            <td>Observacion</td>
+                        </thead>
+                    </table>
+                </div>
             </div>
             <div class="modal-footer">                            
                 <a id="si" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
@@ -248,7 +251,62 @@ require 'acceso_bloquear_ventas.php';
     function borrar(id){    
         $("#si").attr('href','orden_produccion_control.php?vprod_id='+ id + '&accion=3');
         $("#confirmacion").html('<span class="glyphicon glyphicon-warning-sign"></span> Desea borrar la orden de Produccion <i><strong>'+id+'</strong></i>?');
-    };    
+    }; 
+    let prod_id;
+    $('#tablaArticulos tbody').on('click','a',function(){
+        let prod_id_aux;    
+        prod_id = this.children[1].getAttribute('value');
+        let cadena = '#composicion_articulo'+prod_id;
+        if (prod_id != prod_id_aux) {
+            $(cadena).dataTable().fnDestroy();
+            document.getElementById(prod_id).reset();
+        }
+        let tabla = $(cadena).DataTable({
+            'lengthMenu':[[10, 15, 20], [10, 15, 20]],
+            'paging':true,
+            'info':true,
+            'filter':true,
+            'stateSave':true,
+            'processing':true,
+            'searching':false,
+            'ajax': {
+                url: 'articulo_control.php',
+                "type":"POST",
+                "data":function(data){
+                    data.vart_cod=prod_id;
+                    data.accion=2;
+                }
+            },
+            'language':{
+                "sProcessing":     "Procesando...",
+                "sLengthMenu":     "Mostrar _MENU_ registros",
+                "sZeroRecords":    "No se encontraron resultados",
+                "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix":    "",
+                "sSearch":         "Buscar:",
+                "sUrl":            "",
+                "sInfoThousands":  ",",
+                "oPaginate": {
+                    "sFirst":    "Primero",
+                    "sLast":     "Último",
+                    "sNext":     "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            },
+            'columns':[
+                {data:'material','sClass':'text-center'},
+                {data:'cantidad'}]
+            
+        }); 
+
+    });   
     
 </script>
 </body>
