@@ -41,20 +41,21 @@ $accion = $_REQUEST['accion'];
                     $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod) VALUES ($nro_cuota, $monto_cuota, $saldo_cuota, '$estado',$compraCod)";
                     $resultadoInsert = consultas::get_datos($sqlInsert);
                 }else{
-                    $monto_primer_cuota = (int)($resultadoDetalleCompra[0]['total_venta']/$resultadoCompra[0]['can_cuota']);
+                    $monto_cuota = (int)($resultadoDetalleCompra[0]['total_venta']/$resultadoCompra[0]['can_cuota']);
                     $saldo = $resultadoDetalleCompra[0]['total_venta'];
                     $nro_cuota = 0;
-                    while ($saldo >= $monto_primer_cuota) {
+                    while ($saldo >= $monto_cuota) {
                         $nro_cuota ++;
-                        $monto_cuota = $monto_primer_cuota;
-                        $saldo_cuota = $monto_cuota;
+                        // $saldo_cuota = $monto_cuota;
                         $estado = 'P';
-                        $saldo = $saldo - $monto_primer_cuota;
-                        $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod) VALUES ($nro_cuota, $monto_cuota, $saldo_cuota, '$estado',$compraCod)";
+                        $saldo = $saldo - $monto_cuota;
+                        $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod) VALUES ($nro_cuota, $monto_cuota, $saldo, '$estado',$compraCod)";
                         $resultadoInsert = consultas::get_datos($sqlInsert);
                     }
-                    $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod) VALUES ($nro_cuota, $saldo, $saldo_cuota, '$estado',$compraCod)";
-                    $resultadoInsert = consultas::get_datos($sqlInsert);
+                    if ($saldo > 0) {
+                        $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod) VALUES ($nro_cuota++, $saldo, $saldo, '$estado',$compraCod)";
+                        $resultadoInsert = consultas::get_datos($sqlInsert);
+                    }
                 }
         }
         header("location:$valor[1]");

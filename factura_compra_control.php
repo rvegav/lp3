@@ -9,16 +9,18 @@ $prv_cod = $_REQUEST['vprv_cod'];
 $monto = $_REQUEST['vfact_monto'];
 $fecha = $_REQUEST['vped_fecha'];
 $compras = $_REQUEST['cod_com'];
-$articulos = $_REQUEST['articulos']["'cod'"];
-$cantidades = $_REQUEST['articulos']["'cant'"];
-$precios = $_REQUEST['articulos']["'precio'"];
+if (isset($_REQUEST['articulos'])) {
+	$articulos = $_REQUEST['articulos']["'cod'"];
+	$cantidades = $_REQUEST['articulos']["'cant'"];
+	$precios = $_REQUEST['articulos']["'precio'"];
+}
 
 $sql = "INSERT INTO facturas_compras(faco_nro_factura, faco_fecha, faco_prv_cod, faco_timbrado, faco_monto) VALUES (".$nro_factura.", TO_DATE('". $fecha."','YYYY-MM-DD'),".$prv_cod.",".$nro_timbrado.",". $monto.")";
 	$factura_insert = consultas::ejecutar_sql($sql);
 	$sql = "select max(faco_cod) as faco_cod from facturas_compras where faco_nro_factura ='".$nro_factura."' and faco_timbrado = '" .$nro_timbrado."'";
 	$factura_id = consultas::get_datos($sql);
 	$factura_id = $factura_id[0]['faco_cod'];
-	if (count($compras)>0) {
+	if ($compras>0) {
 		// code...
 		for ($i=0; $i < count($compras) ; $i++) { 
 			$sql = "select dc.art_cod, dc.com_precio, dc.com_cant, sum(dc.com_precio * dc.com_cant) as monto_total, a.art_descri  from compras c join detalle_compras dc on dc.com_cod = c.com_cod join articulo a on dc.art_cod = a.art_cod where c.com_cod = ".$compras[$i]." group by dc.art_cod, a.art_descri, dc.com_precio, dc.com_cant";
