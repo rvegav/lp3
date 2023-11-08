@@ -71,7 +71,7 @@ require 'acceso_bloquear_ventas.php';
                                         ?>
                                         <!-- crear tabla con datos -->
                                         <div class="table-responsive">
-                                            <table class="table table-condensed table-striped table-hover table-bordered">
+                                            <table class="table table-condensed table-striped table-hover table-bordered" id="tablaProduccion">
                                                 <thead>
                                                     <tr>
                                                         <th>Nro</th>
@@ -242,10 +242,10 @@ require 'acceso_bloquear_ventas.php';
                                 <select class="form-control select2" name="vmar_cod" required="">
                                     <?php if(!empty($etapas_produccion)) {
                                         foreach ($etapas_produccion as $etapa) { ?>
-                                            <option value="<?php echo $etapa['mar_cod'];?>"><?php echo $etapa['mar_descri'];?></option>
+                                            <option value="<?php echo $etapa['etpr_id'];?>"><?php echo $etapa['etpr_descripcion'];?></option>
                                         <?php } 
                                     }else{?>
-                                        <option value="">Debe insertar al menos una marca</option>
+                                        <option value="">Debe insertar al menos una etapa</option>
                                     <?php } ?>
                                 </select>
                                 <span class="input-group-btn">
@@ -256,10 +256,11 @@ require 'acceso_bloquear_ventas.php';
                     </div>
                     <table>
                         <thead>
-                            <td>#</td>
                             <td>Etapa</td>
                             <td>Fecha</td>
+                            <td>Cantidad</td>
                             <td>Observacion</td>
+                            <td>Estado</td>
                         </thead>
                     </table>
                 </div>
@@ -285,15 +286,15 @@ require 'acceso_bloquear_ventas.php';
         $("#confirmacion").html('<span class="glyphicon glyphicon-warning-sign"></span> Desea borrar la orden de Produccion <i><strong>'+id+'</strong></i>?');
     }; 
     let prod_id;
-    $('#tablaArticulos tbody').on('click','a',function(){
+    $('#tablaProduccion tbody').on('click','a',function(){
         let prod_id_aux;    
         prod_id = this.children[1].getAttribute('value');
-        let cadena = '#composicion_articulo'+prod_id;
+        let cadena_etapa = '#historial_etapa'+prod_id;
         if (prod_id != prod_id_aux) {
-            $(cadena).dataTable().fnDestroy();
+            $(cadena_etapa).dataTable().fnDestroy();
             document.getElementById(prod_id).reset();
         }
-        let tabla = $(cadena).DataTable({
+        let tabla = $(cadena_etapa).DataTable({
             'lengthMenu':[[10, 15, 20], [10, 15, 20]],
             'paging':true,
             'info':true,
@@ -302,11 +303,12 @@ require 'acceso_bloquear_ventas.php';
             'processing':true,
             'searching':false,
             'ajax': {
-                url: 'articulo_control.php',
+                url: 'produccion_control.php',
                 "type":"POST",
                 "data":function(data){
-                    data.vart_cod=prod_id;
-                    data.accion=2;
+                    data.vprod_id=prod_id;
+                    data.accion=6;
+                    data.ruta='etapa';
                 }
             },
             'language':{
@@ -333,9 +335,13 @@ require 'acceso_bloquear_ventas.php';
                 }
             },
             'columns':[
-                {data:'material','sClass':'text-center'},
-                {data:'cantidad'}]
-            
+                {data:'etapa','sClass':'text-center'},
+                {data:'fecha'},
+                {data:'cantidad'},
+                {data:'observacion'},
+                {data:'estado'},
+
+                ]
         }); 
 
     });   
