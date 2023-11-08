@@ -36,14 +36,19 @@ require 'acceso_bloquear_ventas.php';
                             <div class="alert alert-success" role="alert" id="mensaje">
                                 <span class="glyphicon glyphicon-info-sign"></span>
                                 <?php echo $_SESSION['correcto'];
-                                $_SESSION['mensaje'] = '';?>
+                                $_SESSION['error'] = '';
+                                $_SESSION['correcto'] = '';
+                                ?>
                             </div>        
                             <?php } ?>
-                            <?php if (!empty($_SESSION['error'])) { ?>
+                            <?php if ($_SESSION['error']!='') { ?>
                             <div class="alert alert-danger" role="alert" id="mensaje">
                                 <span class="glyphicon glyphicon-info-sign"></span>
                                 <?php echo $_SESSION['error'];
-                                $_SESSION['mensaje'] = '';?>
+                                $_SESSION['error'] = '';
+                                $_SESSION['correcto'] = '';
+                                
+                                ?>
                             </div>        
                             <?php } ?>
                                     <div class="row">
@@ -87,19 +92,27 @@ require 'acceso_bloquear_ventas.php';
                                                                     <td><?php echo $orden['orpr_id']; ?></td>
                                                                     <td><?php echo $orden['orpr_fecha_pedido']; ?></td>
                                                                     <td><?php echo $orden['orpr_fecha_confe']; ?></td>
-                                                                    <td><?php echo $orden['orpr_estado']; ?></td>
+                                                                    <?php if ($orden['orpr_estado']=='P'): ?>
+                                                                        <?php $estado = 'PENDIENTE' ?>
+                                                                    <?php else: ?>
+                                                                        <?php $estado = 'APROBADO' ?>
+                                                                    <?php endif ?>
+                                                                    <td><?php echo $estado; ?></td>
                                                                     <td class="text-center">
                                                                         <a href="orden_produccion_detalle.php?vorpr_id=<?php echo $orden['orpr_id']; ?>" class="btn btn-success btn-sm" role="button" data-title="Detalles" rel="tooltip" data-placement="top">
                                                                             <i class="fa fa-list"></i>
                                                                         </a>
-                                                                        <a href="orden_produccion_edit.php?vorpr_id=<?php echo $orden['orpr_id']; ?>" class="btn btn-warning btn-sm" role="button" 
-                                                                           data-title="Editar" rel="tooltip" data-placement="top">
-                                                                            <i class="fa fa-edit"></i>
-                                                                        </a>
-                                                                        <a onclick="borrar(<?php echo $orden['orpr_id'] ?>)" data-toggle="modal" data-target="#borrar"
-                                                                           class="btn btn-danger btn-sm" role="button" 
-                                                                           data-title="Borrar" rel="tooltip" data-placement="top">
-                                                                            <i class="fa fa-trash"></i>
+                                                                        <?php if ($orden['orpr_estado']=='P'): ?>
+                                                                            
+                                                                            <a onclick="confirmar(<?php echo $orden['orpr_id'] ?>)" class="btn btn-success btn-sm" role="button" 
+                                                                               data-title="Aprobar Pedido" rel="tooltip" data-toggle="modal"  data-placement="top" data-target="#confirmar">
+                                                                                <i class="fa fa-check"></i>
+                                                                            </a>
+                                                                            <a onclick="borrar(<?php echo $orden['orpr_id'] ?>)" data-toggle="modal" data-target="#borrar"
+                                                                               class="btn btn-danger btn-sm" role="button" 
+                                                                               data-title="Borrar" rel="tooltip" data-placement="top">
+                                                                                <i class="fa fa-trash"></i>
+                                                                        <?php endif ?>
                                                                         </a>                                                                    
                                                                     </td>
                                                                 </tr>
@@ -134,16 +147,34 @@ require 'acceso_bloquear_ventas.php';
                         <h4 class="modal-title"><i class="fa fa-trash"></i>Atenci&oacute;n</h4>
                     </div>                    
                         <div class="modal-body">
-                            <div class="alert alert-danger" id="confirmacion"></div>
+                            <div class="alert alert-danger" id="confirmacion_borrar"></div>
                         </div>
                         <div class="modal-footer">                            
-                            <a id="si" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
+                            <a id="si_borrar" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
                             <button data-dismiss="modal" class="btn btn-default"><i class="fa fa-close"></i> NO</button>
                         </div>
                 </div>
             </div>            
         </div>           
-               
+        <div class="modal fade" id="confirmar" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                        <h4 class="modal-title"><i class="fa fa-trash"></i>Atenci&oacute;n</h4>
+                    </div>                    
+                        <div class="modal-body">
+                            <div class="alert alert-success" id="confirmacion_orden"></div>
+                        </div>
+                        <div class="modal-footer">                            
+                            <a id="si_confirmar" role="button" class="btn btn-success"><i class="fa fa-check"></i> SI</a>
+                            <button data-dismiss="modal" class="btn btn-default"><i class="fa fa-close"></i> NO</button>
+                        </div>
+                </div>
+            </div>            
+        </div> 
         </div>                  
 <?php require 'menu/js_lte.ctp'; ?><!--ARCHIVOS JS-->
 <script>
@@ -153,10 +184,13 @@ require 'acceso_bloquear_ventas.php';
 </script>
 <script>
     function borrar(id){    
-        $("#si").attr('href','orden_produccion_control.php?vorpr_id='+ id + '&accion=3');
-        $("#confirmacion").html('<span class="glyphicon glyphicon-warning-sign"></span> Desea borrar la orden de Produccion <i><strong>'+id+'</strong></i>?');
+        $("#si_borrar").attr('href','orden_produccion_control.php?vorpr_id='+ id + '&accion=3');
+        $("#confirmacion_borrar").html('<span class="glyphicon glyphicon-warning-sign"></span> Desea borrar la orden de Produccion <i><strong>'+id+'</strong></i>?');
     };    
-    
+    function confirmar(id){    
+        $("#si_confirmar").attr('href','orden_produccion_control.php?vorpr_id='+ id + '&accion=7');
+        $("#confirmacion_orden").html('<span class="glyphicon glyphicon-check"></span> Desea aprobar la orden de Produccion N° <i><strong>'+id+'</strong></i>?');
+    };
 </script>
     </body>
 </html>

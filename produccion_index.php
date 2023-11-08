@@ -89,6 +89,12 @@ require 'acceso_bloquear_ventas.php';
                                                             <td><?php echo $produccion['prod_fecha']; ?></td>
                                                             <td><?php echo $produccion['prod_lote']; ?></td>
                                                             <td><?php echo $produccion['prod_orpr_id']; ?></td>
+                                                            <?php if ($produccion['prod_aprobado']!='f'): ?>
+                                                                <?php $estado = 'CULMINADO' ?>
+                                                            <?php else: ?>
+                                                                <?php $estado = 'EN PROCESO'?>
+                                                            <?php endif ?>
+                                                            <td><?php echo $estado; ?></td>
                                                             <td class="text-center">
                                                                 <a href="produccion_detalle.php?vprod_id=<?php echo $produccion['prod_id']; ?>" class="btn btn-success btn-sm" role="button" data-title="Detalles" rel="tooltip" data-placement="top">
                                                                     <i class="fa fa-list"></i>
@@ -97,11 +103,12 @@ require 'acceso_bloquear_ventas.php';
                                                                    data-title="Editar" rel="tooltip" data-placement="top">
                                                                    <i class="fa fa-edit"></i>
                                                                </a>
-                                                               <a  data-toggle="modal" data-target="#opereaciones<?php echo $produccion['prod_id']; ?>"
+                                                               <a  data-toggle="modal" data-target="#operaciones<?php echo $produccion['prod_id']; ?>"
                                                                    class="btn btn-success btn-sm" role="button" 
-                                                                   data-title="Opereaciones" rel="tooltip" data-placement="top">
+                                                                    rel="tooltip" data-placement="top">
                                                                    <i class="fa fa-plus"></i>
-                                                               </a>                                                                    
+                                                               </a>
+
                                                            </td>
                                                        </tr>
                                                    <?php } ?>                                                            
@@ -146,19 +153,16 @@ require 'acceso_bloquear_ventas.php';
 </div>
 <?php foreach ($producciones as $produccion): ?>
 
-    <div class="modal fade" id="opereaciones<?php echo $produccion['prod_id'];  ?>" role="dialog">
+    <div class="modal fade" id="operaciones<?php echo $produccion['prod_id'];  ?>" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                     </button>
-                    <h4 class="modal-title"><i class="fa fa-trash"></i>Atenci&oacute;n</h4>
+                    <h4 class="modal-title">Menu Opereaciones</h4>
                 </div>                    
                 <div class="modal-body">
-                    <div class="offset-3">
-                        <h6><span id="presup_select"></span></h6>
 
-                    </div>
                     <div class="row">
                         <div class="col-md-6 offset-3">
                             <button  type="button" data-toggle="modal" data-target="#control<?php echo $produccion['prod_id']; ?>" class="btn btn-block btn-primary btn-lg rounded-pill" id="id_btnedit_detdeveng">Control de Calidad</button>
@@ -177,10 +181,6 @@ require 'acceso_bloquear_ventas.php';
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">                            
-                    <a id="si" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
-                    <button data-dismiss="modal" class="btn btn-default"><i class="fa fa-close"></i> NO</button>
-                </div>
             </div>
         </div>            
     </div>       
@@ -193,14 +193,13 @@ require 'acceso_bloquear_ventas.php';
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                     </button>
-                    <h4 class="modal-title"><i class="fa fa-trash"></i>Atenci&oacute;n</h4>
                 </div>                    
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Etapa:</label>
                         <div class="col-lg-6 col-sm-6 col-md-6 col-xs-6">
                             <div class="input-group">
-                                <?php $etapas_produccion = consultas::get_datos("select * from etapas ");?>
+                                <?php $etapas_produccion = consultas::get_datos("select * from etapas_produccion ");?>
                                 <select class="form-control select2" name="vmar_cod" required="">
                                     <?php if(!empty($etapas_produccion)) {
                                         foreach ($etapas_produccion as $etapa) { ?>
@@ -211,30 +210,27 @@ require 'acceso_bloquear_ventas.php';
                                     <?php } ?>
                                 </select>
                                 <span class="input-group-btn">
-                                    <button class="btn btn-primary btn-flat" type="button" 
-                                    data-toggle ="modal" data-target="#registrar">
-                                    <i class="fa fa-plus"></i>
-                                </button>
-                            </span>
+                                    <button class="btn btn-primary btn-flat" type="button" data-toggle ="modal" data-target="#registrar"><i class="fa fa-plus"></i></button>
+                                </span>
+                            </div>
                         </div>
                     </div>
+                    <table>
+                        <thead>
+                            <td>#</td>
+                            <td>Etapa</td>
+                            <td>Fecha</td>
+                            <td>Observacion</td>
+                        </thead>
+                    </table>
                 </div>
-                <table>
-                    <thead>
-                        <td>#</td>
-                        <td>Etapa</td>
-                        <td>Fecha</td>
-                        <td>Observacion</td>
-                    </thead>
-                </table>
+                <div class="modal-footer">                            
+                    <a id="si" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
+                    <button data-dismiss="modal" class="btn btn-default"><i class="fa fa-close"></i> NO</button>
+                </div>
             </div>
-            <div class="modal-footer">                            
-                <a id="si" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
-                <button data-dismiss="modal" class="btn btn-default"><i class="fa fa-close"></i> NO</button>
-            </div>
-        </div>
-    </div>            
-</div>       
+        </div>            
+    </div>       
 <?php endforeach ?>      
 
 </div>                  
