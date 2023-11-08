@@ -8,7 +8,6 @@ if ($_REQUEST['accion']==1) {
     $mapr = $_REQUEST['vmapr_id'];
     $cant = $_REQUEST['vcant_materia'];
     $art = $_REQUEST['vart_cod'];
-    
     $sql = "INSERT INTO composion_articulos (coar_id, coar_mapr_id, coar_art_id, coar_cant_requerida) VALUES ((select coalesce(max(coar_id),0)+1 from composion_articulos), $mapr, $art, $cant)";
     $resultadoInsert = consultas::ejecutar_sql($sql);
     if ($resultadoInsert) {

@@ -66,7 +66,7 @@ require 'acceso_bloquear_ventas.php';
                                         </div>
                                     </form>                                              
                                     <?php
-                                    $producciones = consultas::get_datos("select * from produccion");
+                                    $producciones = consultas::get_datos("select prod_id, prod_nro, prod_fecha, prod_lote, prod_orpr_id, prod_aprobado, (SELECT etpr_descripcion from control_produccion c left join etapas_produccion e  on c.copr_etpr_id = e.etpr_id where c.copr_prod_id = prod_id and c.copr_fecha = (select max(cp.copr_fecha) from control_produccion cp where cp.copr_prod_id=c.copr_prod_id)) etapa from produccion");
                                     if (!empty($producciones)) {
                                         ?>
                                         <!-- crear tabla con datos -->
@@ -78,6 +78,7 @@ require 'acceso_bloquear_ventas.php';
                                                         <th>Fecha Produccion</th>
                                                         <th>Nro Lote</th>
                                                         <th>Orden Asoc.</th>
+                                                        <th>Etapa Actual</th>
                                                         <th>Estado</th>
                                                         <th class="text-center">Acciones</th>
                                                     </tr>
@@ -89,26 +90,34 @@ require 'acceso_bloquear_ventas.php';
                                                             <td><?php echo $produccion['prod_fecha']; ?></td>
                                                             <td><?php echo $produccion['prod_lote']; ?></td>
                                                             <td><?php echo $produccion['prod_orpr_id']; ?></td>
+                                                            <td><?php echo $produccion['etapa']; ?></td>
+                                                            <?php if ($produccion['prod_aprobado']!='f'): ?>
+                                                                <?php $estado = 'CULMINADO' ?>
+                                                            <?php else: ?>
+                                                                <?php $estado = 'EN PROCESO'?>
+                                                            <?php endif ?>
+                                                            <td><?php echo $estado; ?></td>
                                                             <td class="text-center">
-                                                                <a href="produccion_detalle.php?vprod_id=<?php echo $produccion['prod_id']; ?>" class="btn btn-success btn-sm" role="button" data-title="Detalles" rel="tooltip" data-placement="top">
+                                                                <a  data-toggle = "modal" data-target ="#detalles<?php echo $produccion['prod_id']; ?>"class="btn btn-success btn-sm" role="button" data-title="Detalles" rel="tooltip" data-placement="top" >
                                                                     <i class="fa fa-list"></i>
                                                                 </a>
                                                                 <a href="produccion_edit.php?vprod_id=<?php echo $produccion['prod_id']; ?>" class="btn btn-warning btn-sm" role="button" 
-                                                                 data-title="Editar" rel="tooltip" data-placement="top">
-                                                                 <i class="fa fa-edit"></i>
-                                                             </a>
-                                                             <a  data-toggle="modal" data-target="#opereaciones<?php echo $produccion['prod_id']; ?>"
-                                                                 class="btn btn-success btn-sm" role="button" 
-                                                                 data-title="Opereaciones" rel="tooltip" data-placement="top">
-                                                                 <i class="fa fa-plus"></i>
-                                                             </a>                                                                    
-                                                         </td>
-                                                     </tr>
-                                                 <?php } ?>                                                            
-                                             </tbody>
-                                         </table>
-                                     </div>
-                                 <?php } else { ?>
+                                                                   data-title="Editar" rel="tooltip" data-placement="top">
+                                                                   <i class="fa fa-edit"></i>
+                                                               </a>
+                                                               <a  data-toggle="modal" data-target="#operaciones<?php echo $produccion['prod_id']; ?>"
+                                                                   class="btn btn-success btn-sm" role="button" 
+                                                                    rel="tooltip" data-placement="top">
+                                                                   <i class="fa fa-plus"></i>
+                                                               </a>
+
+                                                           </td>
+                                                       </tr>
+                                                   <?php } ?>                                                            
+                                               </tbody>
+                                           </table>
+                                       </div>
+                                   <?php } else { ?>
                                     <!--mostrar mensaje de alerta tipo info -->
                                     <div class="alert alert-info flat">
                                         <i class="fa fa-info-circle"></i> No se han registrado producciones de produccion...
@@ -146,19 +155,16 @@ require 'acceso_bloquear_ventas.php';
 </div>
 <?php foreach ($producciones as $produccion): ?>
 
-    <div class="modal fade" id="opereaciones<?php echo $produccion['prod_id'];  ?>" role="dialog">
+    <div class="modal fade" id="operaciones<?php echo $produccion['prod_id'];  ?>" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                     </button>
-                    <h4 class="modal-title"><i class="fa fa-trash"></i>Atenci&oacute;n</h4>
+                    <h4 class="modal-title">Menu Opereaciones</h4>
                 </div>                    
                 <div class="modal-body">
-                    <div class="offset-3">
-                        <h6><span id="presup_select"></span></h6>
 
-                    </div>
                     <div class="row">
                         <div class="col-md-6 offset-3">
                             <button  type="button" data-toggle="modal" data-target="#control<?php echo $produccion['prod_id']; ?>" class="btn btn-block btn-primary btn-lg rounded-pill" id="id_btnedit_detdeveng">Control de Calidad</button>
@@ -173,19 +179,52 @@ require 'acceso_bloquear_ventas.php';
                     <br>
                     <div class="row">
                         <div class="col-md-6 offset-3">
-                            <button type="button" data-toggle="modal" data-target="#mano_obra<?php echo $produccion['prod_id']; ?>" class="btn btn-block btn-primary btn-lg rounded-pill" id="id_cambio_plani">Gestionar Mano de obra</button>
+                            <button type="button" data-toggle="modal" data-target="#mano_obra<?php echo $produccion['prod_id']; ?>" class="btn btn-block btn-primary btn-lg rounded-pill" id="id_cambio_plani">Gestionar Costos</button>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">                            
-                    <a id="si" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
-                    <button data-dismiss="modal" class="btn btn-default"><i class="fa fa-close"></i> NO</button>
+            </div>
+        </div>            
+    </div> 
+
+    <div class="modal fade" id="detalles<?php echo $produccion['prod_id'];  ?>" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Articulos a Producir</h4>
+                </div>                    
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="table-responsive">
+                            <?php $sql = "SELECT * FROM detalle_produccion d JOIN articulo a on a.art_cod = d.depro_art_id WHERE depro_prod_id = ".$produccion['prod_id']; ?>
+                            <?php $detalles = consultas::get_datos($sql)?>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Articulo</th>
+                                        <th>Cantidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($detalles)): ?>
+                                        <?php foreach ($detalles as $detalle): ?>
+                                            <tr>
+                                                <td><?php echo $detalle['art_descri'] ?></td>
+                                                <td><?php echo $detalle['depro_cantidad'] ?></td>
+                                            </tr>
+                                        <?php endforeach ?>
+                                    <?php endif ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>            
-    </div>       
-<?php endforeach ?> 
-<?php foreach ($producciones as $produccion): ?>
+    </div> 
 
     <div class="modal fade" id="etapa<?php echo $produccion['prod_id'];  ?>" role="dialog">
         <div class="modal-dialog">
@@ -193,7 +232,6 @@ require 'acceso_bloquear_ventas.php';
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                     </button>
-                    <h4 class="modal-title"><i class="fa fa-trash"></i>Atenci&oacute;n</h4>
                 </div>                    
                 <div class="modal-body">
                     <div class="form-group">
@@ -211,17 +249,12 @@ require 'acceso_bloquear_ventas.php';
                                     <?php } ?>
                                 </select>
                                 <span class="input-group-btn">
-                                    <button class="btn btn-primary btn-flat" type="button" 
-                                    data-toggle ="modal" data-target="#registrar">
-                                    <i class="fa fa-plus"></i>
-                                </button>
-                            </span>
+                                    <button class="btn btn-primary btn-flat" type="button" data-toggle ="modal" data-target="#registrar"><i class="fa fa-plus"></i></button>
+                                </span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="table-responsive">
-
-                    <table class="table" id="historial_etapa<?php echo $produccion['prod_id'] ?>">
+                    <table>
                         <thead>
                             <td>#</td>
                             <td>Etapa</td>
@@ -230,14 +263,13 @@ require 'acceso_bloquear_ventas.php';
                         </thead>
                     </table>
                 </div>
+                <div class="modal-footer">                            
+                    <a id="si" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
+                    <button data-dismiss="modal" class="btn btn-default"><i class="fa fa-close"></i> NO</button>
+                </div>
             </div>
-            <div class="modal-footer">                            
-                <a id="si" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
-                <button data-dismiss="modal" class="btn btn-default"><i class="fa fa-close"></i> NO</button>
-            </div>
-        </div>
-    </div>            
-</div>       
+        </div>            
+    </div>       
 <?php endforeach ?>      
 
 </div>                  
