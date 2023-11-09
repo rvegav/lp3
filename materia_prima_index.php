@@ -33,12 +33,24 @@ require 'acceso_bloquear_ventas.php';
                                     <!-- <a href="marca_print.php" class="btn btn-default btn-sm pull-right" role="button" target="print"><i class="fa fa-print"></i></a>    -->
                                 </div>                                
                                 <div class="box-body">
-                            <?php if (!empty($_SESSION['mensaje'])) { ?>
+                            <?php if (!empty($_SESSION['correcto'])) { ?>
+                            <div class="alert alert-success" role="alert" id="mensaje">
+                                <span class="glyphicon glyphicon-info-sign"></span>
+                                <?php echo $_SESSION['correcto'];
+                                $_SESSION['error'] = '';
+                                $_SESSION['correcto'] = '';
+                                ?>
+                            </div>        
+                            <?php } ?>
+                            <?php if ($_SESSION['error']!='') { ?>
                             <div class="alert alert-danger" role="alert" id="mensaje">
                                 <span class="glyphicon glyphicon-info-sign"></span>
-                                <?php echo $_SESSION['mensaje'];
-                                $_SESSION['mensaje'] = '';?>
-                            </div>        
+                                <?php echo $_SESSION['error'];
+                                $_SESSION['error'] = '';
+                                $_SESSION['correcto'] = '';
+                                
+                                ?>
+                            </div> 
                             <?php } ?>
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -69,6 +81,8 @@ require 'acceso_bloquear_ventas.php';
                                                         <thead>
                                                             <tr>
                                                                 <th>Descripción</th>
+                                                                <th>Unidad de Medida</th>
+                                                                <th>Precio Estimado</th>
                                                                 <th class="text-center">Acciones</th>
                                                             </tr>
                                                         </thead>
@@ -76,6 +90,8 @@ require 'acceso_bloquear_ventas.php';
                                                         <?php foreach ($materias as $materia_prima) { ?>
                                                                 <tr>
                                                                     <td><?php echo $materia_prima['mapr_descripcion']; ?></td>
+                                                                    <td><?php echo $materia_prima['mapr_unidad_medida']; ?></td>
+                                                                    <td><?php echo $materia_prima['mapr_precio']; ?></td>
                                                                     <td class="text-center">
                                                                         <a href="materia_prima_edit.php?vmate_cod=<?php echo $materia_prima['mapr_id']; ?>" class="btn btn-warning btn-sm" role="button" 
                                                                            data-title="Editar" rel="tooltip" data-placement="top">

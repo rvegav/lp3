@@ -96,14 +96,17 @@ if ($_REQUEST['accion']==1) {
     $sql = "UPDATE orden_produccion SET orpr_estado = 'A', orpr_fecha_confe = '".$fechaActual."' WHERE orpr_id = ".$vorpr;
     $update = consultas::ejecutar_sql($sql);
     if ($update) {
-        $sql = "INSERT INTO produccion (prod_id, prod_fecha, prod_orpr_id, prod_aprobado, prod_nro, prod_anho) VALUES((select coalesce(max(prod_id),0)+1 from produccion), '$fechaActual', $vorpr, false, (select coalesce(max(prod_nro),0)+1 from produccion where prod_anho = '$anhoActual'), '$anhoActual')";
-        $insert = consultas::ejecutar_sql($sql);
         if ($insert) {
-            $sql = "SELECT deor_art_id, deor_cantidad FROM detalle_orden_prod WHERE deor_orpr_id =".$vorpr;
+            $sql = "SELECT deor_art_id, sum(deor_cantidad) FROM detalle_orden_prod WHERE deor_orpr_id =".$vorpr."group by deor_art_id";
             $detalles_orden = consultas::get_datos($sql);
             if (!empty($detalles_orden)) {
                 foreach ($detalles_orden as $detalle) {
-                    $sql = "INSERT INTO detalle_produccion (depro_id, depro_art_id, depro_cantidad) VALUES ((select coalesce(max(depro_id),0)+1 from detalle_produccion), $detalle['deor_art_id'], $detalle['deor_cantidad'])";
+                    $sql = "INSERT INTO produccion (prod_id, prod_fecha, prod_orpr_id, prod_aprobado, prod_nro, prod_anho) VALUES((select coalesce(max(prod_id),0)+1 from produccion), '$fechaActual', $vorpr, false, (select coalesce(max(prod_nro),0)+1 from produccion where prod_anho = '$anhoActual'), '$anhoActual')";
+                    $insert = consultas::ejecutar_sql($sql);
+                    $sql = "SELECT max(prod_id) prod_id from produccion";
+                    $consulta = consultas::get_datos($sql);
+                    $prod_id = $consulta[0]['prod_id'];
+                    $sql = "INSERT INTO detalle_produccion (depro_id, depro_art_id, depro_cantidad, depro_prod_id) VALUES ((select coalesce(max(depro_id),0)+1 from detalle_produccion), $detalle['deor_art_id'], $detalle['deor_cantidad'], $prod_id)";
                     $insert = consultas::ejecutar_sql($sql);
                     if (!$insert) {
                         $_SESSION['error'] = 'Hubo un error: No se pudo registrar el detalle';

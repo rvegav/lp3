@@ -57,6 +57,12 @@
                                                 <input type="text" name ="vmate_prima_uni" class="form-control" required=""/>
                                             </div>
                                         </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Precio estimado:</label>
+                                            <div class="col-lg-8 col-sm-8 col-md-8 col-xs-10">
+                                                <input type="text" name ="vmate_prima_precio" class="form-control" required=""/>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="box-footer">
                                         <button type="submit" class="btn btn-primary pull-right">

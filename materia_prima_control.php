@@ -10,8 +10,9 @@ if ($accion == 1) {
     $resultadoId = consultas::get_datos($sql);
     $descripcion = $_REQUEST['vmate_prima_descri'];
     $unidad = $_REQUEST['vmate_prima_uni'];
+    $precio = $_REQUEST['vmate_prima_precio'];
     $id = $resultadoId[0]['mapr_id'];
-    $sql = "INSERT INTO material_primario (mapr_id, mapr_descripcion, mapr_unidad_medida) VALUES ($id, '$descripcion', '$unidad')";
+    $sql = "INSERT INTO material_primario (mapr_id, mapr_descripcion, mapr_unidad_medida, mapr_precio) VALUES ($id, '$descripcion', '$unidad', $precio)";
     $resultadoInsert = consultas::get_datos($sql);
     if ($resultadoInsert) {
         $_SESSION['correcto'] = 'Se insertó correctamente la orden nro:'.$id;
@@ -28,7 +29,8 @@ if ($accion == 1) {
     $id = $_REQUEST['vmate_prima_cod'];
     $descripcion = $_REQUEST['vmate_prima_descri'];
     $unidad = $_REQUEST['vmate_prima_uni'];
-    $sql = "UPDATE material_primario set mapr_descripcion =".$descripcion.", mapr_unidad_medida =".$unidad." where mapr_id = ".$id;
+    $precio = $_REQUEST['vmate_prima_precio'];
+    $sql = "UPDATE material_primario set mapr_descripcion ='$descripcion', mapr_unidad_medida ='$unidad', mapr_precio = $precio  where mapr_id = $id";
     $resultadoUpdate = consultas::ejecutar_sql($sql);
     if ($resultadoUpdate) {
         $_SESSION['correcto'] = 'Se actualizó correctamente la materia prima:'.$id;
@@ -56,11 +58,11 @@ if ($accion == 1) {
     }
 
 }
-if ($resultado[0]['resul']!=null) {
-    $valor = explode("*", $resultado[0]['resul']);
-    $_SESSION['mensaje'] = $valor[0];
-    header("location:materia_prima_index.php");
-}else{
-    $_SESSION['mensaje'] = 'ERROR:'.$sql;
-    header("location:materia_prima_index.php");    
-}
+// if ($resultado[0]['resul']!=null) {
+//     $valor = explode("*", $resultado[0]['resul']);
+//     $_SESSION['mensaje'] = $valor[0];
+//     header("location:materia_prima_index.php");
+// }else{
+//     $_SESSION['mensaje'] = 'ERROR:'.$sql;
+//     header("location:materia_prima_index.php");    
+// }

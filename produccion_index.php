@@ -66,7 +66,7 @@ require 'acceso_bloquear_ventas.php';
                                         </div>
                                     </form>                                              
                                     <?php
-                                    $producciones = consultas::get_datos("select prod_id, prod_nro, prod_fecha, prod_lote, prod_orpr_id, prod_aprobado, (SELECT etpr_descripcion from control_produccion c left join etapas_produccion e  on c.copr_etpr_id = e.etpr_id where c.copr_prod_id = prod_id and c.copr_fecha = (select max(cp.copr_fecha) from control_produccion cp where cp.copr_prod_id=c.copr_prod_id)) etapa from produccion");
+                                    $producciones = consultas::get_datos("select prod_id, prod_nro, prod_fecha, prod_lote, prod_orpr_id, prod_aprobado, (SELECT distinct     etpr_descripcion from control_produccion c left join etapas_produccion e  on c.copr_etpr_id = e.etpr_id where c.copr_prod_id = prod_id and c.copr_item = (select max(cp.copr_item) from control_produccion cp where cp.copr_prod_id=c.copr_prod_id)) etapa from produccion");
                                     if (!empty($producciones)) {
                                         ?>
                                         <!-- crear tabla con datos -->
@@ -107,8 +107,8 @@ require 'acceso_bloquear_ventas.php';
                                                                </a>
                                                                <a  data-toggle="modal" data-target="#operaciones<?php echo $produccion['prod_id']; ?>"
                                                                    class="btn btn-success btn-sm" role="button" 
-                                                                    rel="tooltip" data-placement="top">
-                                                                   <i class="fa fa-plus"></i>
+                                                                   rel="tooltip" data-placement="top">
+                                                                   <i class="fa fa-plus"></i><input type="hidden" value="<?php echo $produccion['prod_id']; ?>">
                                                                </a>
 
                                                            </td>
@@ -179,7 +179,7 @@ require 'acceso_bloquear_ventas.php';
                     <br>
                     <div class="row">
                         <div class="col-md-6 offset-3">
-                            <button type="button" data-toggle="modal" data-target="#mano_obra<?php echo $produccion['prod_id']; ?>" class="btn btn-block btn-primary btn-lg rounded-pill" id="id_cambio_plani">Gestionar Costos</button>
+                            <button type="button" data-toggle="modal" data-target="#costo<?php echo $produccion['prod_id']; ?>" class="btn btn-block btn-primary btn-lg rounded-pill" id="id_cambio_plani">Gestionar Costos</button>
                         </div>
                     </div>
                 </div>
@@ -199,7 +199,7 @@ require 'acceso_bloquear_ventas.php';
 
                     <div class="row">
                         <div class="table-responsive">
-                            <?php $sql = "SELECT * FROM detalle_produccion d JOIN articulo a on a.art_cod = d.depro_art_id WHERE depro_prod_id = ".$produccion['prod_id']; ?>
+                            <?php $sql = "SELECT art_descri||'-'||mar_descri art_descri, d.depro_cantidad FROM detalle_produccion d JOIN articulo a on a.art_cod = d.depro_art_id  join marca m on m.mar_cod = a.mar_cod WHERE depro_prod_id = ".$produccion['prod_id']; ?>
                             <?php $detalles = consultas::get_datos($sql)?>
                             <table class="table">
                                 <thead>
@@ -225,7 +225,73 @@ require 'acceso_bloquear_ventas.php';
             </div>
         </div>            
     </div> 
+    <div class="modal fade" id="costo<?php echo $produccion['prod_id'];  ?>" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                </div>                    
+                <div class="modal-body">
+                    <div class="box box-primary">
+                        <div class="box-header">
+                            <h3 class="box-title">Gastos de la produccion</h3>
+                        </div>
+                        <div class="box-body">
+                            <?php $costoProduccion = consultas::get_datos("select * from costo_produccion where cospr_prod_id =". $produccion['prod_id']); ?>
 
+                            <?php if (empty($costoProduccion)): ?>
+
+                                <form accept-charset="utf-8" class="form-horizontal" id="frmcosto<?php echo $produccion['prod_id'] ?>">
+                                    <input type="hidden" name="vprod_id" value="<?php echo $produccion['prod_id'] ?>">
+                                    <input type="hidden" name="accion" value="7">
+                                    <?php $costoMaterial = consultas::get_datos("select sum(mapr_precio) total_precio from composion_articulos c join material_primario m on m.mapr_id = c.coar_mapr_id where coar_art_id = (SELECT depro_art_id FROM detalle_produccion where depro_prod_id =". $produccion['prod_id'].")"); ?>
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Costo por Composicion:</label>
+                                        <div class="col-lg-8 col-sm-8 col-md-8 col-xs-10">
+                                            <input type="text" name ="vcostoComposion" class="form-control" required="" value="<?php echo $costoMaterial[0]['total_precio'] ?>">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Costo Mano de Obra:</label>
+                                        <div class="col-lg-8 col-sm-8 col-md-8 col-xs-10">
+                                            <input type="text" name ="vcostoMano" class="form-control" required="" value="" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Fecha:</label>
+                                        <div class="col-lg-8 col-sm-8 col-md-8 col-xs-10">
+                                            <input type="date" name ="vfecha" class="form-control" required="" value="" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-primary pull-right registrar_costo">
+                                            <span class="glyphicon glyphicon-floppy-disk"></span> Registrar
+                                        </button>
+                                    </div>
+                                </form>  
+                            <?php endif ?>
+
+                        </div>
+                        <div class="box-footer">
+                            <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
+                                <div class="table-responsive">
+
+                                    <table class="table" id="tablaCosto<?php echo $produccion['prod_id'] ?>">
+                                        <thead>
+                                            <td>Costo Mano de Obra</td>
+                                            <td>Costo Materiales</td>
+                                            <td>Fecha</td>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>            
+    </div> 
     <div class="modal fade" id="etapa<?php echo $produccion['prod_id'];  ?>" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -234,39 +300,81 @@ require 'acceso_bloquear_ventas.php';
                     </button>
                 </div>                    
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Etapa:</label>
-                        <div class="col-lg-6 col-sm-6 col-md-6 col-xs-6">
-                            <div class="input-group">
-                                <?php $etapas_produccion = consultas::get_datos("select * from etapas_produccion where  etpr_id not in (select copr_etpr_id from control_produccion where  copr_prod_id = ".$produccion['prod_id']." )");?>
-                                <select class="form-control select2" name="vmar_cod" required="">
-                                    <?php if(!empty($etapas_produccion)) {
-                                        foreach ($etapas_produccion as $etapa) { ?>
-                                            <option value="<?php echo $etapa['etpr_id'];?>"><?php echo $etapa['etpr_descripcion'];?></option>
-                                        <?php } 
-                                    }else{?>
-                                        <option value="">Debe insertar al menos una etapa</option>
-                                    <?php } ?>
-                                </select>
-                                <span class="input-group-btn">
-                                    <button class="btn btn-primary btn-flat" type="button" data-toggle ="modal" data-target="#registrar"><i class="fa fa-plus"></i></button>
-                                </span>
+                    <div class="box box-primary">
+                        <div class="box-header">
+                            <h3 class="box-title">Gestion de Etapas</h3>
+                        </div>
+                        <div class="box-body">
+                            <form accept-charset="utf-8" class="form-horizontal" id="<?php echo $produccion['prod_id'] ?>">
+                                <div class="form-group">
+                                    <input type="hidden" name="vprod_id" value="<?php echo $produccion['prod_id'] ?>">
+                                    <input type="hidden" name="accion" value="5">
+                                    <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Etapa:</label>
+                                    <div class="col-lg-10 col-sm-10 col-md-10 col-xs-10">
+                                        <div class="input-group">
+                                            <?php $etapas_produccion = consultas::get_datos("select * from etapas_produccion where  etpr_id not in (select copr_etpr_id from control_produccion where  copr_prod_id = ".$produccion['prod_id']." )");?>
+                                            <select class="form-group select2" name="vetpr_id" required="">
+                                                <?php if(!empty($etapas_produccion)) {
+                                                    foreach ($etapas_produccion as $etapa) { ?>
+                                                        <option value="<?php echo $etapa['etpr_id'];?>"><?php echo $etapa['etpr_descripcion'];?></option>
+                                                    <?php } 
+                                                }else{?>
+                                                    <option value="">Debe insertar al menos una etapa</option>
+                                                <?php } ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php $detalle_produccion = consultas::get_datos("select d.depro_cantidad cantidad from produccion o join detalle_produccion d on d.depro_prod_id = o.prod_id where prod_id = ".$produccion['prod_id']); ?>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Cantidad Producida:</label>
+                                    <div class="col-lg-8 col-sm-8 col-md-8 col-xs-10">
+                                        <input type="text" name ="vcantidad" class="form-control" required=""/ value="<?php echo $detalle_produccion[0]['cantidad'] ?>">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Observacion:</label>
+                                    <div class="col-lg-8 col-sm-8 col-md-8 col-xs-10">
+                                        <input type="text" name ="vobservacion" class="form-control" required="" value="" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Realizado por:</label>
+                                    <div class="col-lg-8 col-sm-8 col-md-8 col-xs-10">
+                                        <input type="text" name ="vempl" class="form-control" value="<?php echo $_SESSION['nombres'] ?>" disabled />
+                                        <input type="hidden" name ="vemplcod" class="form-control" value="<?php echo $_SESSION['emp_cod'] ?>" required=""/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-primary pull-right registrar_etapa">
+                                        <span class="glyphicon glyphicon-floppy-disk"></span> Registrar
+                                    </button>
+                                </div>
+                            </form>  
+
+                        </div>
+                        <div class="box-footer">
+                            <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
+                                <div class="table-responsive">
+
+                                    <table class="table" id="historial_etapa<?php echo $produccion['prod_id'] ?>">
+                                        <thead>
+                                            <td>Etapa</td>
+                                            <td>Fecha</td>
+                                            <td>Cantidad</td>
+                                            <td>Observacion</td>
+                                            <td>Estado</td>
+                                        </thead>
+                                    </table>
+                                </div>
                             </div>
+
                         </div>
                     </div>
-                    <table>
-                        <thead>
-                            <td>Etapa</td>
-                            <td>Fecha</td>
-                            <td>Cantidad</td>
-                            <td>Observacion</td>
-                            <td>Estado</td>
-                        </thead>
-                    </table>
+
                 </div>
                 <div class="modal-footer">                            
-                    <a id="si" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
-                    <button data-dismiss="modal" class="btn btn-default"><i class="fa fa-close"></i> NO</button>
+
                 </div>
             </div>
         </div>            
@@ -290,14 +398,16 @@ require 'acceso_bloquear_ventas.php';
         let prod_id_aux;    
         prod_id = this.children[1].getAttribute('value');
         let cadena_etapa = '#historial_etapa'+prod_id;
+        let cadena_costo = '#tablaCosto'*prod_id;
         if (prod_id != prod_id_aux) {
             $(cadena_etapa).dataTable().fnDestroy();
+            $(cadena_costo).dataTable().fnDestroy();
             document.getElementById(prod_id).reset();
         }
         let tabla = $(cadena_etapa).DataTable({
             'lengthMenu':[[10, 15, 20], [10, 15, 20]],
             'paging':true,
-            'info':true,
+            "bLengthChange" : false,
             'filter':true,
             'stateSave':true,
             'processing':true,
@@ -336,16 +446,120 @@ require 'acceso_bloquear_ventas.php';
             },
             'columns':[
                 {data:'etapa','sClass':'text-center'},
-                {data:'fecha'},
-                {data:'cantidad'},
-                {data:'observacion'},
-                {data:'estado'},
-
+                {data:'fecha','sClass':'text-center'},
+                {data:'cantidad','sClass':'text-center'},
+                {data:'observacion','sClass':'text-center'},
+                {data:'estado','sClass':'text-center'}
                 ]
         }); 
+        let tablaCosto = $(cadena_costo).DataTable({
+            'lengthMenu':[[10, 15, 20], [10, 15, 20]],
+            'paging':true,
+            "bLengthChange" : false,
 
-    });   
-    
+            'filter':true,
+            'stateSave':true,
+            'processing':true,
+            'searching':false,
+            'ajax': {
+                url: 'produccion_control.php',
+                "type":"POST",
+                "data":function(data){
+                    data.vprod_id=prod_id;
+                    data.accion=6;
+                    data.ruta='costo';
+                }
+            },
+            'language':{
+                "sProcessing":     "Procesando...",
+                "sLengthMenu":     "Mostrar _MENU_ registros",
+                "sZeroRecords":    "No se encontraron resultados",
+                "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix":    "",
+                "sSearch":         "Buscar:",
+                "sUrl":            "",
+                "sInfoThousands":  ",",
+                "oPaginate": {
+                    "sFirst":    "Primero",
+                    "sLast":     "Último",
+                    "sNext":     "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            },
+            'columns':[
+                {data:'mano','sClass':'text-center'},
+                {data:'material','sClass':'text-center'},
+                {data:'fecha','sClass':'text-center'},
+                ]
+        });
+    });
+$('.registrar_etapa').click(()=>{
+    let cadena = '#'+prod_id;
+    let tabla = '#historial_etapa'+prod_id;
+    let data = $(cadena).serialize();
+
+    $.ajax({
+        url: 'produccion_control.php',
+        type: 'POST',
+        data: data,
+    })
+    .done(function(r) {
+        let json = JSON.parse(r);
+        if (json == 'correcto') {
+            $(tabla).DataTable().ajax.reload();
+        }
+    })
+    .fail(function(xrs) {
+        var json = JSON.parse(xrs.responseText);
+        if (json.mensaje) {
+            alert(json.mensaje);
+        }else{
+            alert('Ocurrio un error inesperado');
+        }
+    })
+    .always(function() {
+        console.log("complete");
+    });
+})     
+$('.registrar_costo').click(()=>{
+    let cadena = 'frmcosto'+prod_id;
+    let tablaCosto = '#tablaCosto'+prod_id;
+    let data = $("#"+cadena).serialize();
+    $.ajax({
+        url: 'produccion_control.php',
+        type: 'POST',
+        data: data,
+    })
+    .done(function(r) {
+        let json = JSON.parse(r);
+        if (json == 'correcto') {
+            $(tablaCosto).DataTable().ajax.reload();
+        }else{
+            alert('Ya se registro el costo para esta produccion ')
+        }
+
+    })
+    .fail(function(xrs) {
+        var json = JSON.parse(xrs.responseText);
+        if (json.mensaje) {
+            alert(json.mensaje);
+        }else{
+            alert('Ocurrio un error inesperado');
+        }
+
+    })
+    .always(function() {
+        console.log("complete");
+    });
+
+})   
 </script>
 </body>
 </html>

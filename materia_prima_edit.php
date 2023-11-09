@@ -35,8 +35,8 @@ require 'acceso_bloquear_ventas.php';
                                 <i class="fa fa-arrow-left"></i>
                             </a>
                         </div>
-                        <form action="articulo_control.php" method="get" accept-charset="utf-8" class="form-horizontal">
-                            <?php $materia = consultas::get_datos("select * from material_primario where art_cod=".$_REQUEST['vmate_cod'])?>
+                        <form action="materia_prima_control.php" method="get" accept-charset="utf-8" class="form-horizontal">
+                            <?php $materia = consultas::get_datos("select * from material_primario where mapr_id=".$_REQUEST['vmate_cod'])?>
                             <div class="box-body">
                                 <input type="hidden" name="accion" value="2"/>
                                 <div class="form-group">
@@ -54,7 +54,13 @@ require 'acceso_bloquear_ventas.php';
                                 <div class="form-group">
                                     <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Unidad de Medida:</label>
                                     <div class="col-lg-8 col-sm-8 col-md-8 col-xs-10">
-                                        <input type="text" name ="vmate_prima_descri" class="form-control" required="" value="<?= $materia[0]['mapr_unidad_medida'] ?>" />
+                                        <input type="text" name ="vmate_prima_uni" class="form-control" required="" value="<?= $materia[0]['mapr_unidad_medida'] ?>" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Precio Estimado:</label>
+                                    <div class="col-lg-8 col-sm-8 col-md-8 col-xs-10">
+                                        <input type="text" name ="vmate_prima_precio" class="form-control" required="" value="<?= $materia[0]['mapr_precio'] ?>" />
                                     </div>
                                 </div>
                             </div>
