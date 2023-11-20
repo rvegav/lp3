@@ -644,9 +644,9 @@ $('.registrar_control').click(()=>{
     .done(function(r) {
         let json = JSON.parse(r);
         if (json == 'correcto') {
-            $(tablaCosto).DataTable().ajax.reload();
+            alert('Se registro correctamente');
         }else{
-            alert('Ya se registro el costo para esta produccion ')
+            alert('Ya se registro la calificacion para esta produccion ');
         }
 
     })

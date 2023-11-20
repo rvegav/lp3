@@ -123,6 +123,25 @@ if ($_REQUEST['accion']==1) {
 
         }
     }
+}elseif ($_REQUEST['accion']==9) {
+    if (isset($_REQUEST['vprod_id'])) {
+        $prod_id =$_REQUEST['vprod_id'];
+        $calificacion = $_REQUEST['calificacion'];
+        $consulta = consultas::get_datos('SElECT * FROM control_calidad c where c.coca_prod_id = '.$prod_id);
+        if (empty($consulta)) {
+            // code...
+            $sql = 'INSERT INTO control_calidad (coca_id, coca_prod_id, coca_calificacion) VALUES ((select coalesce(max(coca_id), 0)+1 from control_calidad), $prod_id, $calificacion)';
+            $resultado = consultas::ejecutar_sql($sql);
+            if ($resultado) {
+                echo json_encode('correcto');
+            }else{
+                echo json_encode('incorrecto');
+            }
+        }
+        
+    }else{
+        echo json_encode('incorrecto');
+    }
 }
 
 
