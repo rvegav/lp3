@@ -31,29 +31,32 @@ $accion = $_REQUEST['accion'];
                 $resultadoActuCabCompras = consultas::get_datos($sqlActuCabeCompras);
                 $sqlCompra = "SELECT * FROM COMPRAS WHERE com_cod= '$compraCod'"; 
                 $resultadoCompra = consultas::get_datos($sqlCompra);
-                $sqlDetalleCompra = "SELECT sum(com_cant * com_precio) total_venta from detalle_compras where com_cod ='$compraCod'" ;
+                $sqlDetalleCompra = "SELECT sum(com_cant * com_precio) total_compra from detalle_compras where com_cod ='$compraCod'" ;
                 $resultadoDetalleCompra = consultas::get_datos($sqlDetalleCompra);
                 if ($resultadoCompra[0]['tipo_compra']=='CONTADO') {
                     $nro_cuota = $resultadoCompra[0]['can_cuota'] ;
-                    $monto_cuota = $resultadoDetalleCompra[0]['total_venta'];
+                    $monto_cuota = $resultadoDetalleCompra[0]['total_compra'];
                     $saldo_cuota = $monto_cuota;
+                    $fecha_venc = date('d-m-Y');
                     $estado = 'P';
-                    $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod) VALUES ($nro_cuota, $monto_cuota, $saldo_cuota, '$estado',$compraCod)";
+                    $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod, fecha_venc) VALUES ($nro_cuota, $monto_cuota, $saldo_cuota, '$estado',$compraCod)";
                     $resultadoInsert = consultas::get_datos($sqlInsert);
                 }else{
-                    $monto_cuota = (int)($resultadoDetalleCompra[0]['total_venta']/$resultadoCompra[0]['can_cuota']);
-                    $saldo = $resultadoDetalleCompra[0]['total_venta'];
+                    $monto_cuota = (int)($resultadoDetalleCompra[0]['total_compra']/$resultadoCompra[0]['can_cuota']);
+                    $saldo = $resultadoDetalleCompra[0]['total_compra'];
                     $nro_cuota = 0;
+                    $date = date('d-m-Y');
+                    $fecha_venc = date('d-m-Y', strtotime($date. ' +1 day'));
                     while ($saldo >= $monto_cuota) {
-                        $nro_cuota ++;
-                        // $saldo_cuota = $monto_cuota;
+                        $nro_cuota ++;                        
                         $estado = 'P';
                         $saldo = $saldo - $monto_cuota;
-                        $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod) VALUES ($nro_cuota, $monto_cuota, $saldo, '$estado',$compraCod)";
+                        $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod, fecha_venc) VALUES ($nro_cuota, $monto_cuota, $saldo, '$estado',$compraCod, $fecha_venc)"    ;
                         $resultadoInsert = consultas::get_datos($sqlInsert);
+                        $fecha_venc = date('d-m-Y', strtotime($fecha_venc. ' +1 day'));
                     }
                     if ($saldo > 0) {
-                        $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod) VALUES ($nro_cuota++, $saldo, $saldo, '$estado',$compraCod)";
+                        $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod, fecha_venc) VALUES ($nro_cuota++, $saldo, $saldo, '$estado',$compraCod, $fecha_venc)";
                         $resultadoInsert = consultas::get_datos($sqlInsert);
                     }
                 }

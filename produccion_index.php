@@ -66,7 +66,7 @@ require 'acceso_bloquear_ventas.php';
                                         </div>
                                     </form>                                              
                                     <?php
-                                    $producciones = consultas::get_datos("select prod_id, prod_nro, prod_fecha, prod_lote, prod_orpr_id, prod_aprobado, (SELECT distinct     etpr_descripcion from control_produccion c left join etapas_produccion e  on c.copr_etpr_id = e.etpr_id where c.copr_prod_id = prod_id and c.copr_item = (select max(cp.copr_item) from control_produccion cp where cp.copr_prod_id=c.copr_prod_id)) etapa from produccion");
+                                    $producciones = consultas::get_datos("select prod_id, prod_nro, prod_fecha, prod_lote, prod_orpr_id, prod_aprobado, (SELECT distinct     etpr_descripcion from control_produccion c left join etapas_produccion e  on c.copr_etpr_id = e.etpr_id where c.copr_prod_id = prod_id and c.copr_item = (select max(cp.copr_item) from control_produccion cp where cp.copr_prod_id=c.copr_prod_id)) etapa, (select count(*) from control_calidad where coca_prod_id = prod_id) flg_cal, (SELECT distinct copr_observacion  from control_produccion c left join etapas_produccion e  on c.copr_etpr_id = e.etpr_id where c.copr_prod_id = prod_id and c.copr_item = (select max(cp.copr_item) from control_produccion cp where cp.copr_prod_id=c.copr_prod_id)) observacion from produccion");
                                     if (!empty($producciones)) {
                                         ?>
                                         <!-- crear tabla con datos -->
@@ -79,6 +79,7 @@ require 'acceso_bloquear_ventas.php';
                                                         <th>Nro Lote</th>
                                                         <th>Orden Asoc.</th>
                                                         <th>Etapa Actual</th>
+                                                        <th>Observación</th>
                                                         <th>Estado</th>
                                                         <th class="text-center">Acciones</th>
                                                     </tr>
@@ -91,6 +92,11 @@ require 'acceso_bloquear_ventas.php';
                                                             <td><?php echo $produccion['prod_lote']; ?></td>
                                                             <td><?php echo $produccion['prod_orpr_id']; ?></td>
                                                             <td><?php echo $produccion['etapa']; ?></td>
+                                                            <?php if ($produccion['observacion']==''): ?>
+                                                                <td>No hay observación</td>
+                                                            <?php else: ?>
+                                                                <td><?php echo $produccion['observacion']; ?></td>                                                                
+                                                            <?php endif ?>
                                                             <?php if ($produccion['prod_aprobado']!='f'): ?>
                                                                 <?php $estado = 'CULMINADO' ?>
                                                             <?php else: ?>
@@ -101,10 +107,13 @@ require 'acceso_bloquear_ventas.php';
                                                                 <a  data-toggle = "modal" data-target ="#detalles<?php echo $produccion['prod_id']; ?>"class="btn btn-success btn-sm" role="button" data-title="Detalles" rel="tooltip" data-placement="top" >
                                                                     <i class="fa fa-list"></i>
                                                                 </a>
-                                                                <a href="produccion_edit.php?vprod_id=<?php echo $produccion['prod_id']; ?>" class="btn btn-warning btn-sm" role="button" 
-                                                                   data-title="Editar" rel="tooltip" data-placement="top">
-                                                                   <i class="fa fa-edit"></i>
-                                                               </a>
+                                                                <?php if ($produccion['flg_cal']==0): ?>
+
+                                                                    <a onclick="culminar_produccion(<?php echo $produccion['prod_nro']?>, <?php echo $produccion['prod_id'] ?>)" data-toggle="modal" data-target="#culminar<?php echo $produccion['prod_id']; ?>" class="btn btn-warning btn-sm" role="button" 
+                                                                       data-title="Culminar" rel="tooltip" data-placement="top">
+                                                                       <i class="fa fa-check"></i>
+                                                                   </a>
+                                                               <?php endif ?>
                                                                <a  data-toggle="modal" data-target="#operaciones<?php echo $produccion['prod_id']; ?>"
                                                                    class="btn btn-success btn-sm" role="button" 
                                                                    rel="tooltip" data-placement="top">
@@ -133,8 +142,8 @@ require 'acceso_bloquear_ventas.php';
 
 </div>
 <?php require 'menu/footer_lte.ctp'; ?>  
-<!-- MODAL CARGO BORRAR -->
-<div class="modal fade" id="borrar" role="dialog">
+<!-- MODAL CARGO culminar -->
+<div class="modal fade" id="culminar" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -144,10 +153,10 @@ require 'acceso_bloquear_ventas.php';
               <h4 class="modal-title"><i class="fa fa-trash"></i>Atenci&oacute;n</h4>
           </div>                    
           <div class="modal-body">
-            <div class="alert alert-danger" id="confirmacion"></div>
+            <div class="alert alert-danger" id="confirmacion-"></div>
         </div>
         <div class="modal-footer">                            
-            <a id="si" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
+            <a id="si_" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
             <button data-dismiss="modal" class="btn btn-default"><i class="fa fa-close"></i> NO</button>
         </div>
     </div>
@@ -186,6 +195,24 @@ require 'acceso_bloquear_ventas.php';
             </div>
         </div>            
     </div> 
+    <div class="modal fade" id="culminar<?php echo $produccion['prod_id'];  ?>" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Culminacion de Produccion</h4>
+                </div>                    
+                <div class="modal-body">
+                    <div class="alert alert-success" id="confirmacion"></div>
+                </div>
+                <div class="modal-footer">                            
+                    <a id="si" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
+                    <button data-dismiss="modal" class="btn btn-default"><i class="fa fa-close"></i> NO</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" id="detalles<?php echo $produccion['prod_id'];  ?>" role="dialog">
         <div class="modal-dialog">
@@ -196,7 +223,6 @@ require 'acceso_bloquear_ventas.php';
                     <h4 class="modal-title">Articulos a Producir</h4>
                 </div>                    
                 <div class="modal-body">
-
                     <div class="row">
                         <div class="table-responsive">
                             <?php $sql = "SELECT art_descri||'-'||mar_descri art_descri, d.depro_cantidad FROM detalle_produccion d JOIN articulo a on a.art_cod = d.depro_art_id  join marca m on m.mar_cod = a.mar_cod WHERE depro_prod_id = ".$produccion['prod_id']; ?>
@@ -286,6 +312,52 @@ require 'acceso_bloquear_ventas.php';
                                     </table>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>            
+    </div> 
+    <div class="modal fade" id="control<?php echo $produccion['prod_id'];  ?>" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                </div>                    
+                <div class="modal-body">
+                    <div class="box box-primary">
+                        <div class="box-header">
+                            <h3 class="box-title">Control de Calidad</h3>
+                        </div>
+                        <div class="box-body">
+                            <?php $costoProduccion = consultas::get_datos("select * from control_calidad where coca_prod_id =". $produccion['prod_id']); ?>
+
+                            <?php if (empty($costoProduccion)): ?>
+
+                                <form accept-charset="utf-8" class="form-horizontal" id="frmcontrol<?php echo $produccion['prod_id'] ?>">
+                                    <input type="hidden" name="vprod_id" value="<?php echo $produccion['prod_id'] ?>">
+                                    <input type="hidden" name="accion" value="9">
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-2 col-sm-3 col-md-2 col-xs-2">Calificacion:</label>
+                                        <div class="col-lg-8 col-sm-8 col-md-8 col-xs-10">
+                                            <select class="form-group select2" name="calificacion" required="">
+                                                <option value="0">No Aprobado</option>
+                                                <option value="1">Aprobado</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-primary pull-right registrar_control">
+                                            <span class="glyphicon glyphicon-floppy-disk"></span> Registrar
+                                        </button>
+                                    </div>
+                                </form>  
+                            <?php endif ?>
+
+                        </div>
+                        <div class="box-footer">
                         </div>
                     </div>
                 </div>
@@ -389,13 +461,14 @@ require 'acceso_bloquear_ventas.php';
     });
 </script>
 <script>
-    function borrar(id){    
-        $("#si").attr('href','orden_produccion_control.php?vprod_id='+ id + '&accion=3');
-        $("#confirmacion").html('<span class="glyphicon glyphicon-warning-sign"></span> Desea borrar la orden de Produccion <i><strong>'+id+'</strong></i>?');
+    function culminar_produccion(nro, id){    
+        $("#si").attr('href','produccion_control.php?vprod_id='+ id + '&accion=8');
+        $("#confirmacion").html('<span class="glyphicon glyphicon-warning-sign"></span> Desea dar por culminada la Produccion N°<i><strong>'+nro+'</strong></i>?');
     }; 
     let prod_id;
     $('#tablaProduccion tbody').on('click','a',function(){
         let prod_id_aux;    
+        console.log(this);
         prod_id = this.children[1].getAttribute('value');
         let cadena_etapa = '#historial_etapa'+prod_id;
         let cadena_costo = '#tablaCosto'*prod_id;
@@ -559,7 +632,38 @@ $('.registrar_costo').click(()=>{
         console.log("complete");
     });
 
-})   
+}) 
+$('.registrar_control').click(()=>{
+    let cadena = 'frmcontrol'+prod_id;
+    let data = $("#"+cadena).serialize();
+    $.ajax({
+        url: 'produccion_control.php',
+        type: 'POST',
+        data: data,
+    })
+    .done(function(r) {
+        let json = JSON.parse(r);
+        if (json == 'correcto') {
+            $(tablaCosto).DataTable().ajax.reload();
+        }else{
+            alert('Ya se registro el costo para esta produccion ')
+        }
+
+    })
+    .fail(function(xrs) {
+        var json = JSON.parse(xrs.responseText);
+        if (json.mensaje) {
+            alert(json.mensaje);
+        }else{
+            alert('Ocurrio un error inesperado');
+        }
+
+    })
+    .always(function() {
+        console.log("complete");
+    });
+
+}) 
 </script>
 </body>
 </html>

@@ -107,6 +107,22 @@ if ($_REQUEST['accion']==1) {
         }
     }
 
+}elseif ($_REQUEST['accion']==8) {
+    if (isset($_REQUEST['vprod_id'])) {
+        $sql = "select coca_calificacion calificacion from control_calidad where coca_prod_id =".$_REQUEST['vprod_id'];
+        $calificacion = consultas::get_datos($sql);
+        if ($calificacion[0]['calificacion']>0) {
+            $sql = "select CASE WHEN count(*)=0 THEN 1 ELSE count(*) END lote, depro_art_id articulo from produccion p join detalle_produccion dp on dp.depro_prod_id = prod_id where depro_art_id = (select d.depro_art_id from detalle_produccion d where d.depro_prod_id = ".$_REQUEST['vprod_id'].") group by depro_art_id ";
+            $lote_nro = consultas::get_datos($sql);
+            $sql='UPDATE produccion set prod_lote = '. $lote_nro[0]['lote'] .' where prod_id ='. $_REQUEST['vprod_id'];
+            $update = consultas::ejecutar_sql($sql);
+            $sql = "select cp.copr_canti_producida cantidad from control_produccion cp where cp.copr_id = (select max(c.copr_id) from control_produccion c where c.copr_prod_id =".$_REQUEST['vprod_id'].")";
+            $cantidad_producida = consultas::get_datos($sql);
+            $sql = 'UPDATE stock set stoc_cant= (stoc_cant + '.$cantidad_producida[0]['cantidad'].') where art_cod ='.$lote_nro[0]['articulo'];
+            $update_stock = consultas::ejecutar_sql($sql);
+
+        }
+    }
 }
 
 

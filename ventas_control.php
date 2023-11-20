@@ -80,8 +80,31 @@ if (!empty($resultadoCaja)) {
                     $actualizarVentaCaja = "update ventas set nro_aper = ".$resultadoCaja[0]['nro_aper'].", caj_cod = ".$resultadoCaja[0]['caj_cod'].",ven_total = ".$totalPrecio." where ven_cod = ".$resUltimoId[0]['max'];
                     $resActuVentaCaja = consultas::get_datos($actualizarVentaCaja);
                 }
+            }
+            if ($_REQUEST['vtipo_venta']=='CONTADO') {            
+                $nro_cuota = $_REQUEST['vcan_cuota'];
+                $monto_cuota = $resultadoDetalleCompra[0]['total_venta'];
+                $fecha_venc = date('d-m-Y H:i:s');
+                $saldo_cuota = $monto_cuota;
+                $estado_cuota  = 'P';
+                $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod) VALUES ($nro_cuota, $monto_cuota, $saldo_cuota, '$estado',$compraCod)";
+                $resultadoInsert = consultas::get_datos($sqlInsert);
             }else{
-
+                $monto_cuota = (int)($resultadoDetalleCompra[0]['total_venta']/$resultadoCompra[0]['can_cuota']);
+                $saldo = $resultadoDetalleCompra[0]['total_venta'];
+                $nro_cuota = 0;
+                while ($saldo >= $monto_cuota) {
+                    $nro_cuota ++;
+                        // $saldo_cuota = $monto_cuota;
+                    $estado = 'P';
+                    $saldo = $saldo - $monto_cuota;
+                    $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod) VALUES ($nro_cuota, $monto_cuota, $saldo, '$estado',$compraCod)";
+                    $resultadoInsert = consultas::get_datos($sqlInsert);
+                }
+                if ($saldo > 0) {
+                    $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod) VALUES ($nro_cuota++, $saldo, $saldo, '$estado',$compraCod)";
+                    $resultadoInsert = consultas::get_datos($sqlInsert);
+                }
             }
         }
     $valor = explode("*", $resultado[0]['resul']);
