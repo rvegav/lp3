@@ -114,7 +114,7 @@ if ($_REQUEST['accion']==1) {
         if ($calificacion[0]['calificacion']>0) {
             $sql = "select CASE WHEN count(*)=0 THEN 1 ELSE count(*) END lote, depro_art_id articulo from produccion p join detalle_produccion dp on dp.depro_prod_id = prod_id where depro_art_id = (select d.depro_art_id from detalle_produccion d where d.depro_prod_id = ".$_REQUEST['vprod_id'].") group by depro_art_id ";
             $lote_nro = consultas::get_datos($sql);
-            $sql='UPDATE produccion set prod_lote = '. $lote_nro[0]['lote'] .', prod_aprobado = true where prod_id ='. $_REQUEST['vprod_id'];
+            $sql='update produccion set prod_lote = '. $lote_nro[0]['lote'] .', prod_aprobado = true where prod_id ='. $_REQUEST['vprod_id'];
             $update = consultas::ejecutar_sql($sql);
             $sql = "select cp.copr_canti_producida cantidad from control_produccion cp where cp.copr_id = (select max(c.copr_id) from control_produccion c where c.copr_prod_id =".$_REQUEST['vprod_id'].")";
             $cantidad_producida = consultas::get_datos($sql);

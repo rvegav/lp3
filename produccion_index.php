@@ -153,7 +153,7 @@ require 'acceso_bloquear_ventas.php';
               <h4 class="modal-title"><i class="fa fa-trash"></i>Atenci&oacute;n</h4>
           </div>                    
           <div class="modal-body">
-            <div class="alert alert-danger" id="confirmacion-"></div>
+            <div class="alert alert-danger" id="confirmacion_culminacion"></div>
         </div>
         <div class="modal-footer">                            
             <a id="si_" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
@@ -463,7 +463,7 @@ require 'acceso_bloquear_ventas.php';
 <script>
     function culminar_produccion(nro, id){    
         $("#si").attr('href','produccion_control.php?vprod_id='+ id + '&accion=8');
-        $("#confirmacion").html('<span class="glyphicon glyphicon-warning-sign"></span> Desea dar por culminada la Produccion N°<i><strong>'+nro+'</strong></i>?');
+        $("#confirmacion_culminacion").html('<span class="glyphicon glyphicon-warning-sign"></span> Desea dar por culminada la Produccion N°<i><strong>'+nro+'</strong></i>?');
     }; 
     let prod_id;
     $('#tablaProduccion tbody').on('click','a',function(){
