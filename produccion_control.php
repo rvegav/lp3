@@ -113,10 +113,6 @@ if ($_REQUEST['accion']==1) {
         $calificacion = consultas::get_datos($sql);
         if (intval($calificacion[0]['calificacion'])>0) {
             $sql = "select CASE WHEN count(*)=0 THEN 1 ELSE count(*) END lote, depro_art_id articulo from produccion p join detalle_produccion dp on dp.depro_prod_id = prod_id where depro_art_id = (select d.depro_art_id from detalle_produccion d where d.depro_prod_id = ".$_REQUEST['vprod_id'].") group by depro_art_id ";
-            echo "<pre>";
-            var_dump ($sql);
-            echo "</pre>";
-            die();
             $lote_nro = consultas::get_datos($sql);
             $sql='update produccion set prod_lote = '. $lote_nro[0]['lote'] .', prod_aprobado = true where prod_id ='. $_REQUEST['vprod_id'];
             $update = consultas::ejecutar_sql($sql);
