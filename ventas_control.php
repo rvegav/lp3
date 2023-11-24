@@ -82,6 +82,7 @@ if (!empty($resultadoCaja)) {
             }
             $sql = "select * from ventas where ven_cod = ".$idVendCod;
             $ultimaVenta = consultas::get_datos($sql);
+            $plazo = $_REQUEST['vven_plazo'];
             if ($_REQUEST['vtipo_venta']=='CONTADO') {            
                 $nro_cuota = $_REQUEST['vcan_cuota'];
                 $monto_cuota = $ultimaVenta[0]['ven_total'];
@@ -93,7 +94,7 @@ if (!empty($resultadoCaja)) {
             }else{
                 $monto_cuota = (int)($ultimaVenta[0]['ven_total']/$ultimaVenta[0]['can_cuota']);
                 $saldo = $ultimaVenta[0]['ven_total'];
-                $fecha_venc =   date('d-m-Y', strtotime($date. ' +1 months'));
+                $fecha_venc =   date('d-m-Y', strtotime($date. ' +'+$plazo+' days'));
                 $nro_cuota = 0;
                 $estado_cuota = 'P';
                 while ($saldo >= $monto_cuota) {
@@ -103,7 +104,7 @@ if (!empty($resultadoCaja)) {
                     $saldo = $saldo - $monto_cuota;
                     $sqlInsert = "INSERT INTO ctas_a_cobrar (nro_cuota, monto_cuota, saldo_cuota, fecha_venc, estado_cuota, ven_cod) VALUES ($nro_cuota, $monto_cuota, $saldo, '$fecha_venc', '$estado_cuota',$idVendCod)";
                     $resultadoInsert = consultas::get_datos($sqlInsert);
-                    $fecha_venc = date('d-m-Y', strtotime($fecha_venc. ' +1 months'));
+                    $fecha_venc = date('d-m-Y', strtotime($fecha_venc.  ' +'+$plazo+' days'));
 
                 }
                 if ($saldo > 0) {
