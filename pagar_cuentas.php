@@ -72,7 +72,7 @@ require 'clases/consultasAjax.php';
                                         <label> Proveedor:</label>
                                         <div >
                                             <?php $proveedor= consultas::get_datos("select prv_razonsocial, p.prv_cod from ctas_a_pagar c join compras co on co.com_cod = c.com_cod join proveedor p on p.prv_cod = co.prv_cod");?>
-                                            <input class="form-control" name="vprv_nombre" type="text"  required="" readonly=""> value="<?php echo $proveedor[0]['prv_razonsocial'] ?>" />
+                                            <input class="form-control" name="vprv_nombre" type="text"  required="" readonly> value="<?php echo $proveedor[0]['prv_razonsocial'] ?>" />
                                             <input class="form-control" name="vprv_cod" type="hidden" required="" value="<?php echo $proveedor[0]['prv_cod'] ?>" />
 
                                         </div>                                                                                                                                                  

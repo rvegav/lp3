@@ -50,8 +50,6 @@ if ($_REQUEST['accion']==1) {
 	}elseif ($_REQUEST['accion']==2) {
 		$sql = "INSERT INTO facturas_compras(faco_nro_factura, faco_fecha, faco_prv_cod, faco_timbrado, faco_monto) VALUES (".$nro_factura.", TO_DATE('". $fecha."','YYYY-MM-DD'),".$prv_cod.",".$nro_timbrado.",". $monto.")";
 			$factura_insert = consultas::ejecutar_sql($sql);
-			die();
-
 			if ($factura_insert) {
 				$sql = 'UPDATE ctas_a_pagar set estado_cuota =\'A\' where ctpa_id ='. $_REQUEST['vctpa_id'];
 				$resultado = consultas::ejecutar_sql($sql);
