@@ -29,7 +29,7 @@ require 'acceso_bloquear_ventas.php';
                             <div class="box-header">
                                 <i class="ion ion-clipboard"></i>
                                 <h3 class="box-title">Modulo Producción</h3>
-                                <a href="orden_produccion_add.php" class="btn btn-primary btn-sm pull-right" role="button"><i class="fa fa-plus"></i></a>
+                                <!-- <a href="orden_produccion_add.php" class="btn btn-primary btn-sm pull-right" role="button"><i class="fa fa-plus"></i></a> -->
                             </div>                                
                             <div class="box-body">
                                 <?php if (!empty($_SESSION['correcto'])) { ?>

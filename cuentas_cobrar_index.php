@@ -42,7 +42,7 @@ require 'acceso_bloquear_ventas.php';
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">                                            
                                             <?php
-                                            $cuentas_pagar = consultas::get_datos("select * from ctas_a_cobrar");
+                                            $cuentas_pagar = consultas::get_datos("select * from ctas_a_cobrar order by ven_cod asc ");
                                             if (!empty($cuentas_pagar)) {
                                                 ?>
                                                 <!-- crear tabla con datos -->

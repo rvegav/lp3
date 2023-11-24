@@ -30,7 +30,7 @@ require 'acceso_bloquear_compras.php';
                             <div class="box box-primary">
                                 <div class="box-header">
                                     <i class="fa fa-plus"></i>
-                                    <h3 class="box-title">Presupuesto de Ventaspr</h3>
+                                    <h3 class="box-title">Pedido de Venta</h3>
                                     <a href="pedventas_add.php" class="btn btn-primary btn-sm pull-right" role="button"><i class="fa fa-plus"></i></a>                                                                                                                
                                 </div>                                
                                 <div class="box-body">
