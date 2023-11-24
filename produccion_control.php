@@ -111,10 +111,6 @@ if ($_REQUEST['accion']==1) {
     if (isset($_REQUEST['vprod_id'])) {
         $sql = "select coca_calificacion calificacion from control_calidad where coca_prod_id =".$_REQUEST['vprod_id'];
         $calificacion = consultas::get_datos($sql);
-        echo "<pre>";
-        var_dump (intval($calificacion[0]['calificacion'])>0);
-        echo "</pre>";
-        die();
         if (intval($calificacion[0]['calificacion'])>0) {
             $sql = "select CASE WHEN count(*)=0 THEN 1 ELSE count(*) END lote, depro_art_id articulo from produccion p join detalle_produccion dp on dp.depro_prod_id = prod_id where depro_art_id = (select d.depro_art_id from detalle_produccion d where d.depro_prod_id = ".$_REQUEST['vprod_id'].") group by depro_art_id ";
             $lote_nro = consultas::get_datos($sql);
