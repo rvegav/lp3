@@ -30,7 +30,7 @@ require 'clases/consultasAjax.php';
                             <div class="box-header">
                                 <i class="ion ion-plus"></i>
                                 <h3 class="box-title">Cuentas a pagar</h3>
-                                <a href="factura_compra_index.php" class="btn btn-primary pull-right btn-sm" role="buttom" data-title ="Volver"
+                                <a href="cuentas_pagar_index.php" class="btn btn-primary pull-right btn-sm" role="buttom" data-title ="Volver"
                                 rel="tooltip" data-placement="top">
                                 <i class="fa fa-arrow-left"></i>
                             </a>

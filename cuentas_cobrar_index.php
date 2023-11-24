@@ -28,8 +28,8 @@ require 'acceso_bloquear_ventas.php';
                         <div class="box box-primary">
                             <div class="box-header">
                                 <i class="ion ion-clipboard"></i>
-                                <h3 class="box-title">Cuentas a Pagar</h3>
-                               
+                                <h3 class="box-title">Cuentas a Cobrar</h3>
+                                
                             </div>                                
                             <div class="box-body">
                                 <?php if (!empty($_SESSION['mensaje'])) { ?>
@@ -40,26 +40,9 @@ require 'acceso_bloquear_ventas.php';
                                     </div>        
                                 <?php } ?>       
                                 <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <!-- <form method="post" accept-charset="utf-8" class="form-horizontal">
-                                                <div class="box-body">
-                                                    <div class="form-group">
-                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> 
-                                                            <div class="input-group custom-search-form">
-                                                                <input type="search" class="form-control" name="buscar" placeholder="Ingrese el valor a buscar..." autofocus="">    
-                                                                <span class="input-group-btn">
-                                                                    <button type="submit" class="btn btn-primary btn-flat"
-                                                                    data-title = "Buscar" rel="tooltip" data-placement="bottom">
-                                                                        <i class="fa fa-search"></i>
-                                                                    </button>
-                                                                </span>
-                                                            </div>                                                            
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </form> -->                                              
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">                                            
                                             <?php
-                                            $cuentas_pagar = consultas::get_datos("select * from ctas_a_pagar");
+                                            $cuentas_pagar = consultas::get_datos("select * from ctas_a_cobrar");
                                             if (!empty($cuentas_pagar)) {
                                                 ?>
                                                 <!-- crear tabla con datos -->
@@ -68,7 +51,7 @@ require 'acceso_bloquear_ventas.php';
                                                         <thead>
                                                             <tr>
                                                                 <th>Nro Cuota</th>
-                                                                <th>Nro Compra</th>
+                                                                <th>Nro Venta</th>
                                                                 <th>Monto Cuota</th>
                                                                 <th>Saldo Cuota</th>
                                                                 <th>Fecha Vencimiento</th>
@@ -80,7 +63,7 @@ require 'acceso_bloquear_ventas.php';
                                                             <?php foreach ($cuentas_pagar as $cuenta) { ?>
                                                                 <tr>
                                                                     <td><?php echo $cuenta['nro_cuota']; ?></td>
-                                                                    <td><?php echo $cuenta['com_cod']; ?></td>
+                                                                    <td><?php echo $cuenta['ven_cod']; ?></td>
                                                                     <td><?php echo $cuenta['monto_cuota']; ?></td>
                                                                     <td><?php echo $cuenta['saldo_cuota']; ?></td>
                                                                     <td><?php echo $cuenta['fecha_venc']; ?></td>
@@ -93,9 +76,9 @@ require 'acceso_bloquear_ventas.php';
                                                                     <td class="text-center">
                                                                         <?php if ($cuenta['estado_cuota']=='P'): ?>
 
-                                                                            <a onclick="confirmar(<?php echo $cuenta['ctpa_id'] ?>, <?php echo $cuenta['nro_cuota'] ?>)" class="btn
+                                                                            <a onclick="confirmar(<?php echo $cuenta['ctco_id'] ?>, <?php echo $cuenta['nro_cuota'] ?>)" class="btn
                                                                                 btn-default btn-sm" role="button" 
-                                                                                data-title="Pagar" rel="tooltip" data-toggle="modal"  data-placement="top" data-target="#confirmar">
+                                                                                data-title="Cobrar" rel="tooltip" data-toggle="modal"  data-placement="top" data-target="#confirmar">
                                                                                 <i class="fa fa-check"></i>
                                                                             </a>
                                                                         <?php else: ?>
@@ -115,7 +98,7 @@ require 'acceso_bloquear_ventas.php';
                                     <?php } else { ?>
                                         <!--mostrar mensaje de alerta tipo info -->
                                         <div class="alert alert-info flat">
-                                            <i class="fa fa-info-circle"></i> No se han registrado ordenes de produccion...
+                                            <i class="fa fa-info-circle"></i> No se han registrado cuentas a pagar...
                                         </div>
                                     <?php } ?>
                                 </div>
@@ -176,12 +159,12 @@ require 'acceso_bloquear_ventas.php';
 </script>
 <script>
     function borrar(id, nro){    
-        $("#si_borrar").attr('href','orden_produccion_control.php?vctpa_id='+ id + '&accion=3');
+        $("#si_borrar").attr('href','orden_produccion_control.php?vctco_id='+ id + '&accion=3');
         $("#confirmacion_borrar").html('<span class="glyphicon glyphicon-warning-sign"></span> Desea borrar la orden de Produccion <i><strong>'+id+'</strong></i>?');
     };    
     function confirmar(id, nro){    
-        $("#si_confirmar").attr('href','pagar_cuentas.php?vctpa_id='+ id + '&accion=7');
-        $("#confirmacion_orden").html('<span class="glyphicon glyphicon-check"></span> Desea abonar la cuota N° <i><strong>'+nro+'</strong></i>?');
+        $("#si_confirmar").attr('href','cobrar_cuentas.php?vctco_id='+ id + '&accion=7');
+        $("#confirmacion_orden").html('<span class="glyphicon glyphicon-check"></span> Desea cobrar la cuota N° <i><strong>'+nro+'</strong></i>?');
     };
 </script>
 </body>

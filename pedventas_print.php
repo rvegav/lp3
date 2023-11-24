@@ -85,7 +85,26 @@ if (!empty(isset($_REQUEST['opcion']))) {
     }
 }  else {
     $pedidoVenta = $resPedidoVenta[0]["ped_cod"];
-    $cabecera = consultas::get_datos("select * from v_pedido_cabventa where ped_cod = '$vpedCod'"); 
+    $cabecera = consultas::get_datos("select pc.ped_cod,
+    to_char(pc.ped_fecha::timestamp with time zone, 'dd/mm/yyyy'::text) AS ped_fecha,
+    pc.emp_cod,
+    (e.emp_nombre::text || ' '::text) || e.emp_apellido::text AS empleado,
+    pc.cli_cod,
+    c.cli_ci,
+    (c.cli_nombre::text || ' '::text) || c.cli_apellido::text AS clientes,
+        CASE pc.estado
+            WHEN 'P'::text THEN 'PENDIENTE'::text
+            WHEN 'C'::text THEN 'CONFIRMADO'::text
+            ELSE 'ANULADO'::text
+        END AS estado,
+    pc.id_sucursal,
+    ( SELECT sum(detalle_pedventa.ped_cant * detalle_pedventa.ped_precio) AS sum
+           FROM detalle_pedventa
+          WHERE detalle_pedventa.ped_cod = pc.ped_cod) AS ped_total,
+     convertir_letra((( SELECT sum(detalle_pedventa.ped_cant * detalle_pedventa.ped_precio) FROM detalle_pedventa WHERE detalle_pedventa.ped_cod = pv.ped_cod))) AS totalletra 
+        from pedido_venta pv 
+        join pedido_cabventa pc on pv.ped_cod = pc.ped_cod join clientes c on pc.cli_cod = c.cli_cod 
+        join empleado e on pc.emp_cod = e.emp_cod where pv.ven_cod = '$vpedCod'"); 
 
 }
 if(!empty($cabecera)){

@@ -41,7 +41,7 @@ require 'acceso_bloquear_ventas.php';
                                 ?>
                             </div>        
                             <?php } ?>
-                            <?php if ($_SESSION['error']!='') { ?>
+                            <?php if (!empty($_SESSION['error'])) { ?>
                             <div class="alert alert-danger" role="alert" id="mensaje">
                                 <span class="glyphicon glyphicon-info-sign"></span>
                                 <?php echo $_SESSION['error'];
