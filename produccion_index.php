@@ -471,7 +471,7 @@ require 'acceso_bloquear_ventas.php';
         console.log(this);
         prod_id = this.children[1].getAttribute('value');
         let cadena_etapa = '#historial_etapa'+prod_id;
-        let cadena_costo = '#tablaCosto'*prod_id;
+        let cadena_costo = '#tablaCosto'+prod_id;
         if (prod_id != prod_id_aux) {
             $(cadena_etapa).dataTable().fnDestroy();
             $(cadena_costo).dataTable().fnDestroy();
@@ -529,7 +529,6 @@ require 'acceso_bloquear_ventas.php';
             'lengthMenu':[[10, 15, 20], [10, 15, 20]],
             'paging':true,
             "bLengthChange" : false,
-
             'filter':true,
             'stateSave':true,
             'processing':true,
