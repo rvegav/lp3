@@ -66,7 +66,7 @@ require 'acceso_bloquear_ventas.php';
                                         </div>
                                     </form>                                              
                                     <?php
-                                    $producciones = consultas::get_datos("select prod_id, prod_nro, prod_fecha, prod_lote, prod_orpr_id, prod_aprobado, (SELECT distinct     etpr_descripcion from control_produccion c left join etapas_produccion e  on c.copr_etpr_id = e.etpr_id where c.copr_prod_id = prod_id and c.copr_item = (select max(cp.copr_item) from control_produccion cp where cp.copr_prod_id=c.copr_prod_id)) etapa, (select count(*) from control_calidad where coca_prod_id = prod_id) flg_cal, (SELECT distinct copr_observacion  from control_produccion c left join etapas_produccion e  on c.copr_etpr_id = e.etpr_id where c.copr_prod_id = prod_id and c.copr_item = (select max(cp.copr_item) from control_produccion cp where cp.copr_prod_id=c.copr_prod_id)) observacion from produccion");
+                                    $producciones = consultas::get_datos("select prod_id, prod_nro, prod_fecha, prod_lote, prod_orpr_id, prod_aprobado, (SELECT distinct     etpr_descripcion from control_produccion c left join etapas_produccion e  on c.copr_etpr_id = e.etpr_id where c.copr_prod_id = prod_id and c.copr_item = (select max(cp.copr_item) from control_produccion cp where cp.copr_prod_id=c.copr_prod_id)) etapa, (select count(*) from control_calidad where coca_prod_id = prod_id ) flg_cal, (SELECT distinct copr_observacion  from control_produccion c left join etapas_produccion e  on c.copr_etpr_id = e.etpr_id where c.copr_prod_id = prod_id and c.copr_item = (select max(cp.copr_item) from control_produccion cp where cp.copr_prod_id=c.copr_prod_id)) observacion  from produccion");
                                     if (!empty($producciones)) {
                                         ?>
                                         <!-- crear tabla con datos -->
@@ -97,7 +97,7 @@ require 'acceso_bloquear_ventas.php';
                                                             <?php else: ?>
                                                                 <td><?php echo $produccion['observacion']; ?></td>                                                                
                                                             <?php endif ?>
-                                                            <?php if ($produccion['prod_aprobado']!='f'): ?>
+                                                            <?php if ($produccion['prod_aprobado']!='false'): ?>
                                                                 <?php $estado = 'CULMINADO' ?>
                                                             <?php else: ?>
                                                                 <?php $estado = 'EN PROCESO'?>
