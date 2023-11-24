@@ -131,6 +131,10 @@ if ($_REQUEST['accion']==1) {
                 header("location:produccion_index.php"); 
             }
 
+        }else{
+            $_SESSION['error'] = 'Se necesita tener una calificacion en control de calidad:';
+            $_SESSION['correcto'] = '';
+            header("location:produccion_index.php"); 
         }
     }
 }elseif ($_REQUEST['accion']==9) {
