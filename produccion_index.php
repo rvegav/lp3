@@ -358,6 +358,7 @@ require 'acceso_bloquear_ventas.php';
 
                         </div>
                         <div class="box-footer">
+                            <h5>Calificacion produccion: Terminado</h5>
                         </div>
                     </div>
                 </div>
