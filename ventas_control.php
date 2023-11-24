@@ -104,7 +104,7 @@ if (!empty($resultadoCaja)) {
                     $saldo = $saldo - $monto_cuota;
                     $sqlInsert = "INSERT INTO ctas_a_cobrar (nro_cuota, monto_cuota, saldo_cuota, fecha_venc, estado_cuota, ven_cod) VALUES ($nro_cuota, $monto_cuota, $saldo, '$fecha_venc', '$estado_cuota',$idVendCod)";
                     $resultadoInsert = consultas::get_datos($sqlInsert);
-                    $fecha_venc = date('d-m-Y', strtotime($fecha_venc.  ' +'+$plazo+' days'));
+                    $fecha_venc = date('d-m-Y', strtotime($fecha_venc . ' +'+$plazo+' days'));
 
                 }
                 if ($saldo > 0) {
