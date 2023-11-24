@@ -156,7 +156,7 @@ require 'acceso_bloquear_ventas.php';
             <div class="alert alert-danger" id="confirmacion_culminacion"></div>
         </div>
         <div class="modal-footer">                            
-            <a id="si_culminar" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
+            <a id="si_" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
             <button data-dismiss="modal" class="btn btn-default"><i class="fa fa-close"></i> NO</button>
         </div>
     </div>
@@ -204,10 +204,10 @@ require 'acceso_bloquear_ventas.php';
                     <h4 class="modal-title">Culminacion de Produccion</h4>
                 </div>                    
                 <div class="modal-body">
-                    <div class="alert alert-success" id="confirmacion"></div>
+                    <div class="alert alert-success" id="confirmacion_culminacion"></div>
                 </div>
                 <div class="modal-footer">                            
-                    <a id="si" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
+                    <a id="si_culminar" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
                     <button data-dismiss="modal" class="btn btn-default"><i class="fa fa-close"></i> NO</button>
                 </div>
             </div>
