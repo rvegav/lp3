@@ -94,7 +94,7 @@ if (!empty($resultadoCaja)) {
             }else{
                 $monto_cuota = (int)($ultimaVenta[0]['ven_total']/$ultimaVenta[0]['can_cuota']);
                 $saldo = $ultimaVenta[0]['ven_total'];
-                $fecha_venc =   date('d-m-Y', strtotime($date. ' +'+$plazo+' days'));
+                $fecha_venc =   date('d-m-Y', strtotime($fecha_venc. ' +'+$plazo+' days'));
                 $nro_cuota = 0;
                 $estado_cuota = 'P';
                 while ($saldo >= $monto_cuota) {
