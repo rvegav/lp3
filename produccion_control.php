@@ -72,6 +72,7 @@ if ($_REQUEST['accion']==1) {
                 foreach ($costos as $etapa) {
                     $array['mano']= $etapa['cospr_monto_mano_obra'];
                     $array['material']= $etapa['cospr_monto_produccion'];
+                    $array['fecha']= $etapa['cospr_fecha'];
                     $datos[] = $array;
                 }
                 $data['data']= $datos;
