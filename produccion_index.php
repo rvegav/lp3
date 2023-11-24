@@ -204,10 +204,10 @@ require 'acceso_bloquear_ventas.php';
                     <h4 class="modal-title">Culminacion de Produccion</h4>
                 </div>                    
                 <div class="modal-body">
-                    <div class="alert alert-success" id="confirmacion_culminacion"></div>
+                    <div class="alert alert-success" id="confirmacion_culminacion<?php echo $produccion['prod_id'];  ?>"></div>
                 </div>
                 <div class="modal-footer">                            
-                    <a id="si_culminar" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
+                    <a id="si_culminar<?php echo $produccion['prod_id'];  ?>" role="button" class="btn btn-danger"><i class="fa fa-check"></i> SI</a>
                     <button data-dismiss="modal" class="btn btn-default"><i class="fa fa-close"></i> NO</button>
                 </div>
             </div>
@@ -462,8 +462,8 @@ require 'acceso_bloquear_ventas.php';
 </script>
 <script>
     function culminar_produccion(nro, id){    
-        $("#si_culminar").attr('href','produccion_control.php?vprod_id='+ id + '&accion=8');
-        $("#confirmacion_culminacion").html('<span class="glyphicon glyphicon-warning-sign"></span> Desea dar por culminada la Produccion N°<i><strong>'+nro+'</strong></i>?');
+        $("#si_culminar"+id).attr('href','produccion_control.php?vprod_id='+ id + '&accion=8');
+        $("#confirmacion_culminacion"+id).html('<span class="glyphicon glyphicon-warning-sign"></span> Desea dar por culminada la Produccion N°<i><strong>'+nro+'</strong></i>?');
     }; 
     let prod_id;
     $('#tablaProduccion tbody').on('click','a',function(){
