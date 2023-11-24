@@ -106,7 +106,7 @@ if ($_REQUEST['accion']==1) {
                     $sql = "SELECT max(prod_id) prod_id from produccion";
                     $consulta = consultas::get_datos($sql);
                     $prod_id = $consulta[0]['prod_id'];
-                    $sql = "INSERT INTO detalle_produccion (depro_id, depro_art_id, depro_cantidad, depro_prod_id) VALUES ((select coalesce(max(depro_id),0)+1 from detalle_produccion), $detalle['deor_art_id'], $detalle['deor_cantidad'], $prod_id)";
+                    $sql = "insert INTO detalle_produccion (depro_id, depro_art_id, depro_cantidad, depro_prod_id) VALUES ((select coalesce(max(depro_id),0)+1 from detalle_produccion),". $detalle['deor_art_id'].", ".$detalle['deor_cantidad'].",". $prod_id.")";
                     $insert = consultas::ejecutar_sql($sql);
                     if (!$insert) {
                         $_SESSION['error'] = 'Hubo un error: No se pudo registrar el detalle';
