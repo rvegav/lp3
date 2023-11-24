@@ -96,13 +96,13 @@ if ($_REQUEST['accion']==1) {
     $sql = "UPDATE orden_produccion SET orpr_estado = 'A', orpr_fecha_confe = '".$fechaActual."' WHERE orpr_id = ".$vorpr;
     $update = consultas::ejecutar_sql($sql);
     if ($update) {
-        if ($insert) {
-            $sql = "SELECT deor_art_id, sum(deor_cantidad) FROM detalle_orden_prod WHERE deor_orpr_id =".$vorpr."group by deor_art_id";
-            $detalles_orden = consultas::get_datos($sql);
-            if (!empty($detalles_orden)) {
-                foreach ($detalles_orden as $detalle) {
-                    $sql = "INSERT INTO produccion (prod_id, prod_fecha, prod_orpr_id, prod_aprobado, prod_nro, prod_anho) VALUES((select coalesce(max(prod_id),0)+1 from produccion), '$fechaActual', $vorpr, false, (select coalesce(max(prod_nro),0)+1 from produccion where prod_anho = '$anhoActual'), '$anhoActual')";
-                    $insert = consultas::ejecutar_sql($sql);
+        $sql = "SELECT deor_art_id, sum(deor_cantidad) FROM detalle_orden_prod WHERE deor_orpr_id =".$vorpr."group by deor_art_id";
+        $detalles_orden = consultas::get_datos($sql);
+        if (!empty($detalles_orden)) {
+            foreach ($detalles_orden as $detalle) {
+                $sql = "INSERT INTO produccion (prod_id, prod_fecha, prod_orpr_id, prod_aprobado, prod_nro, prod_anho) VALUES((select coalesce(max(prod_id),0)+1 from produccion), '$fechaActual', $vorpr, false, (select coalesce(max(prod_nro),0)+1 from produccion where prod_anho = '$anhoActual'), '$anhoActual')";
+                $insert = consultas::ejecutar_sql($sql);
+                if ($insert) {
                     $sql = "SELECT max(prod_id) prod_id from produccion";
                     $consulta = consultas::get_datos($sql);
                     $prod_id = $consulta[0]['prod_id'];
@@ -111,17 +111,17 @@ if ($_REQUEST['accion']==1) {
                     if (!$insert) {
                         $_SESSION['error'] = 'Hubo un error: No se pudo registrar el detalle';
                     }
+                }else{
+                    $_SESSION['error'] = 'Hubo un error: No se pudo generar la produccion';
+                    $_SESSION['correcto'] = '';
+                    header("location:orden_produccion_index.php");    
+
                 }
             }
             $_SESSION['correcto'] = 'Se actualizó correctamente la orden nro:'.$vorpr;
             $_SESSION['error'] = '';
             header("location:orden_produccion_index.php");    
             
-        }else{
-            $_SESSION['error'] = 'Hubo un error: No se pudo generar la produccion';
-            $_SESSION['correcto'] = '';
-            header("location:orden_produccion_index.php");    
-
         }
     }else{
         $_SESSION['error'] = 'Hubo un error: No se pudo aprobar la orden';
