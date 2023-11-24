@@ -143,7 +143,7 @@ require 'acceso_bloquear_ventas.php';
 </div>
 <?php require 'menu/footer_lte.ctp'; ?>  
 <!-- MODAL CARGO culminar -->
-<div class="modal fade" id="culminar" role="dialog">
+<!-- <div class="modal fade" id="culminar" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -161,7 +161,7 @@ require 'acceso_bloquear_ventas.php';
         </div>
     </div>
 </div>            
-</div>
+</div> -->
 <?php foreach ($producciones as $produccion): ?>
 
     <div class="modal fade" id="operaciones<?php echo $produccion['prod_id'];  ?>" role="dialog">
