@@ -82,11 +82,11 @@ if (!empty($resultadoCaja)) {
             }
             $sql = "select * from ventas where ven_cod = ".$idVendCod;
             $ultimaVenta = consultas::get_datos($sql);
+            $fecha_venc = date('d-m-Y H:i:s');
             $plazo = $_REQUEST['vven_plazo'];
             if ($_REQUEST['vtipo_venta']=='CONTADO') {            
                 $nro_cuota = $_REQUEST['vcan_cuota'];
                 $monto_cuota = $ultimaVenta[0]['ven_total'];
-                $fecha_venc = date('d-m-Y H:i:s');
                 $saldo_cuota = $monto_cuota;
                 $estado_cuota  = 'P';
                 $sqlInsert = "INSERT INTO ctas_a_cobrar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, fecha_venc, ven_cod) VALUES ($nro_cuota, $monto_cuota, $saldo_cuota, '$estado_cuota','$fecha_venc', $idVendCod)";
