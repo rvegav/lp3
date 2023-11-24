@@ -36,14 +36,14 @@ require 'acceso_bloquear_ventas.php';
                                     <div class="alert alert-success" role="alert" id="mensaje">
                                         <span class="glyphicon glyphicon-info-sign"></span>
                                         <?php echo $_SESSION['correcto'];
-                                        $_SESSION['mensaje'] = '';?>
+                                        $_SESSION['correcto'] = '';?>
                                     </div>        
                                 <?php } ?>
                                 <?php if (!empty($_SESSION['error'])) { ?>
                                     <div class="alert alert-danger" role="alert" id="mensaje">
                                         <span class="glyphicon glyphicon-info-sign"></span>
                                         <?php echo $_SESSION['error'];
-                                        $_SESSION['mensaje'] = '';?>
+                                        $_SESSION['error'] = '';?>
                                     </div>        
                                 <?php } ?>
                                 <div class="row">
@@ -107,12 +107,12 @@ require 'acceso_bloquear_ventas.php';
                                                                 <a  data-toggle = "modal" data-target ="#detalles<?php echo $produccion['prod_id']; ?>"class="btn btn-success btn-sm" role="button" data-title="Detalles" rel="tooltip" data-placement="top" >
                                                                     <i class="fa fa-list"></i>
                                                                 </a>
+                                                                <?php if ($produccion['flg_cal']==0): ?>
 
                                                                     <a onclick="culminar_produccion(<?php echo $produccion['prod_nro']?>, <?php echo $produccion['prod_id'] ?>)" data-toggle="modal" data-target="#culminar<?php echo $produccion['prod_id']; ?>" class="btn btn-warning btn-sm" role="button" 
                                                                        data-title="Culminar" rel="tooltip" data-placement="top">
                                                                        <i class="fa fa-check"></i>
                                                                    </a>
-                                                                <?php if ($produccion['flg_cal']==0): ?>
                                                                <?php endif ?>
                                                                <a  data-toggle="modal" data-target="#operaciones<?php echo $produccion['prod_id']; ?>"
                                                                    class="btn btn-success btn-sm" role="button" 
