@@ -96,7 +96,7 @@ if ($_REQUEST['accion']==1) {
     $sql = "UPDATE orden_produccion SET orpr_estado = 'A', orpr_fecha_confe = '".$fechaActual."' WHERE orpr_id = ".$vorpr;
     $update = consultas::ejecutar_sql($sql);
     if ($update) {
-        $sql = "SELECT deor_art_id, sum(deor_cantidad) FROM detalle_orden_prod WHERE deor_orpr_id =".$vorpr." group by deor_art_id";
+        $sql = "SELECT deor_art_id, sum(deor_cantidad) deor_cantidad FROM detalle_orden_prod WHERE deor_orpr_id =".$vorpr." group by deor_art_id";
         $detalles_orden = consultas::get_datos($sql);
         if (!empty($detalles_orden)) {
             foreach ($detalles_orden as $detalle) {
