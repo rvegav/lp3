@@ -117,9 +117,19 @@ if ($_REQUEST['accion']==1) {
             $sql='UPDATE produccion set prod_lote = '. $lote_nro[0]['lote'] .', prod_aprobado = true where prod_id ='. $_REQUEST['vprod_id'];
             $update = consultas::ejecutar_sql($sql);
             $sql = "select cp.copr_canti_producida cantidad from control_produccion cp where cp.copr_id = (select max(c.copr_id) from control_produccion c where c.copr_prod_id =".$_REQUEST['vprod_id'].")";
-            $cantidad_producida = consultas::get_datos($sql);
-            $sql = 'UPDATE stock set stoc_cant= (stoc_cant + '.$cantidad_producida[0]['cantidad'].') where art_cod ='.$lote_nro[0]['articulo'];
+            $cantidad_producida = consultas::get_datos($sql);.
+            $sql = "update stock set stoc_cant= (stoc_cant + ".$cantidad_producida[0]['cantidad'].") where art_cod =".$lote_nro[0]['articulo'];
             $update_stock = consultas::ejecutar_sql($sql);
+            if ($update_stock) {
+                $_SESSION['correcto'] = 'Se actualizó el stock';
+                $_SESSION['error'] = '';
+                header("location:produccion_index.php"); 
+
+            }else{
+                $_SESSION['error'] = 'Hubo un error:';
+                $_SESSION['correcto'] = '';
+                header("location:produccion_index.php"); 
+            }
 
         }
     }
@@ -129,7 +139,6 @@ if ($_REQUEST['accion']==1) {
         $calificacion = $_REQUEST['calificacion'];
         $consulta = consultas::get_datos('SElECT * FROM control_calidad c where c.coca_prod_id = '.$prod_id);
         if (empty($consulta)) {
-            // code...
             $sql = 'INSERT INTO control_calidad (coca_id, coca_prod_id, coca_calificacion) VALUES ((select coalesce(max(coca_id), 0)+1 from control_calidad), $prod_id, $calificacion)';
             $resultado = consultas::ejecutar_sql($sql);
             if ($resultado) {
@@ -138,7 +147,7 @@ if ($_REQUEST['accion']==1) {
                 echo json_encode('incorrecto');
             }
         }
-        
+
     }else{
         echo json_encode('incorrecto');
     }
