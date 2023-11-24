@@ -112,7 +112,7 @@ if ($_REQUEST['accion']==1) {
         $sql = "select coca_calificacion calificacion from control_calidad where coca_prod_id =".$_REQUEST['vprod_id'];
         $calificacion = consultas::get_datos($sql);
         echo "<pre>";
-        print_r ($calificacion);
+        var_dump ($calificacion);
         echo "</pre>";
         die();
         if ($calificacion[0]['calificacion']>0) {
