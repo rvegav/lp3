@@ -46,14 +46,14 @@ $accion = $_REQUEST['accion'];
                     $saldo = $resultadoDetalleCompra[0]['total_compra'];
                     $nro_cuota = 0;
                     $date = date('d-m-Y');
-                    $fecha_venc = date('d-m-Y', strtotime($date. ' +1 day'));
+                    $fecha_venc = date('d-m-Y', strtotime($fecha_venc. ' + '.$resultadoCompra[0]['com_plazo'].' day'));
                     while ($saldo >= $monto_cuota) {
                         $nro_cuota ++;                        
                         $estado = 'P';
                         $saldo = $saldo - $monto_cuota;
                         $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod, fecha_venc) VALUES ($nro_cuota, $monto_cuota, $saldo, '$estado',$compraCod, $fecha_venc)"    ;
                         $resultadoInsert = consultas::get_datos($sqlInsert);
-                        $fecha_venc = date('d-m-Y', strtotime($fecha_venc. ' +1 day'));
+                        $fecha_venc = date('d-m-Y', strtotime($fecha_venc. ' + '.$resultadoCompra[0]['com_plazo'].' day'));
                     }
                     if ($saldo > 0) {
                         $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod, fecha_venc) VALUES ($nro_cuota++, $saldo, $saldo, '$estado',$compraCod, $fecha_venc)";
