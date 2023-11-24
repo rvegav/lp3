@@ -107,12 +107,12 @@ require 'acceso_bloquear_ventas.php';
                                                                 <a  data-toggle = "modal" data-target ="#detalles<?php echo $produccion['prod_id']; ?>"class="btn btn-success btn-sm" role="button" data-title="Detalles" rel="tooltip" data-placement="top" >
                                                                     <i class="fa fa-list"></i>
                                                                 </a>
-                                                                <?php if ($produccion['flg_cal']==0): ?>
 
                                                                     <a onclick="culminar_produccion(<?php echo $produccion['prod_nro']?>, <?php echo $produccion['prod_id'] ?>)" data-toggle="modal" data-target="#culminar<?php echo $produccion['prod_id']; ?>" class="btn btn-warning btn-sm" role="button" 
                                                                        data-title="Culminar" rel="tooltip" data-placement="top">
                                                                        <i class="fa fa-check"></i>
                                                                    </a>
+                                                                <?php if ($produccion['flg_cal']==0): ?>
                                                                <?php endif ?>
                                                                <a  data-toggle="modal" data-target="#operaciones<?php echo $produccion['prod_id']; ?>"
                                                                    class="btn btn-success btn-sm" role="button" 
