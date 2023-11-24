@@ -143,7 +143,7 @@ if ($_REQUEST['accion']==1) {
         $calificacion = $_REQUEST['calificacion'];
         $consulta = consultas::get_datos('SElECT * FROM control_calidad c where c.coca_prod_id = '.$prod_id);
         if (empty($consulta)) {
-            $sql = 'INSERT INTO control_calidad (coca_id, coca_prod_id, coca_calificacion) VALUES ((select coalesce(max(coca_id), 0)+1 from control_calidad), $prod_id, $calificacion)';
+            $sql = 'insert INTO control_calidad (coca_id, coca_prod_id, coca_calificacion) VALUES ((select coalesce(max(coca_id), 0)+1 from control_calidad), '.$prod_id.', '.$calificacion.')';
             $resultado = consultas::ejecutar_sql($sql);
             if ($resultado) {
                 echo json_encode('correcto');
