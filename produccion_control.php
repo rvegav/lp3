@@ -117,7 +117,7 @@ if ($_REQUEST['accion']==1) {
             $sql='UPDATE produccion set prod_lote = '. $lote_nro[0]['lote'] .', prod_aprobado = true where prod_id ='. $_REQUEST['vprod_id'];
             $update = consultas::ejecutar_sql($sql);
             $sql = "select cp.copr_canti_producida cantidad from control_produccion cp where cp.copr_id = (select max(c.copr_id) from control_produccion c where c.copr_prod_id =".$_REQUEST['vprod_id'].")";
-            $cantidad_producida = consultas::get_datos($sql);.
+            $cantidad_producida = consultas::get_datos($sql);
             $sql = "update stock set stoc_cant= (stoc_cant + ".$cantidad_producida[0]['cantidad'].") where art_cod =".$lote_nro[0]['articulo'];
             $update_stock = consultas::ejecutar_sql($sql);
             if ($update_stock) {
