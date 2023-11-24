@@ -97,7 +97,7 @@ require 'acceso_bloquear_ventas.php';
                                                             <?php else: ?>
                                                                 <td><?php echo $produccion['observacion']; ?></td>                                                                
                                                             <?php endif ?>
-                                                            <?php if ($produccion['prod_aprobado']!='false'): ?>
+                                                            <?php if ($produccion['prod_aprobado']!='f'): ?>
                                                                 <?php $estado = 'CULMINADO' ?>
                                                             <?php else: ?>
                                                                 <?php $estado = 'EN PROCESO'?>
