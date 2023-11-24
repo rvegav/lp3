@@ -68,9 +68,8 @@ if ($_REQUEST['accion']==1) {
         }elseif ($_REQUEST['ruta']=='costo') {
             $sql="select cospr_fecha, cospr_monto_produccion, cospr_monto_mano_obra from costo_produccion c where cospr_prod_id =". $vprod_id; 
             $etapas = consultas::get_datos($sql);
-            if ($etapas) {
-                foreach ($etapas as $etapa) {
-                    $array['etapa']= $etapa['etapa'];
+            if ($costo) {
+                foreach ($costo as $etapa) {
                     $array['mano']= $etapa['cospr_monto_mano_obra'];
                     $array['material']= $etapa['cospr_monto_produccion'];
                     $datos[] = $array;
