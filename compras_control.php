@@ -39,7 +39,7 @@ $accion = $_REQUEST['accion'];
                     $saldo_cuota = $monto_cuota;
                     $fecha_venc = date('d-m-Y');
                     $estado = 'P';
-                    $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod, fecha_venc) VALUES ($nro_cuota, $monto_cuota, $saldo_cuota, '$estado',$compraCod)";
+                    $sqlInsert = "INSERT INTO ctas_a_pagar (nro_cuota, monto_cuota, saldo_cuota, estado_cuota, com_cod, fecha_venc) VALUES ($nro_cuota, $monto_cuota, $saldo_cuota, '$estado',$compraCod, '$fecha_venc')";
                     $resultadoInsert = consultas::get_datos($sqlInsert);
                 }else{
                     $monto_cuota = (int)($resultadoDetalleCompra[0]['total_compra']/$resultadoCompra[0]['can_cuota']);
